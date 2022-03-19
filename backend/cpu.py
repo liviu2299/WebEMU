@@ -3,8 +3,7 @@ from keystone import *
 from unicorn.x86_const import *
 
 def uc(input):
-    if not input: return "no input"
-    
+
     code = input.encode("utf-8")
 
     ## 1) Assemble

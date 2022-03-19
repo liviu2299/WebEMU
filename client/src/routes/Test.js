@@ -25,7 +25,7 @@ export default function Test() {
 
     const handleSubmit = () => {
         (async () => {
-            const rawResponse = await fetch("/", {
+            const rawResponse = await fetch("/compute", {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -37,10 +37,13 @@ export default function Test() {
             const content = await rawResponse.json();
 
             setOutput(content);
-            console.log(output)
 
         })();
     }
+
+    useEffect(() => {
+        console.log(output)
+    }, [output])
 
     return (
         <div>
