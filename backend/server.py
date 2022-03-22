@@ -18,8 +18,9 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
+
     @app.route("/compute", methods=['POST'])
-    def send():
+    def compute():
         data = request.json['data']
         code = data.splitlines()
 
@@ -30,10 +31,24 @@ def create_app(test_config=None):
         return{
             "registers": emu.REGISTERS,
             "memory": emu.MEMORY["data"],
-            "stack": None                   # TODO: Get stack memory
+            "stack": emu.STACK["data"]
         }   
 
     # TODO: Return errors to client
+
+    @app.route("/compile", methods=['POST'])
+    def compile():
+        data = request.json['data']
+        code = data.splitlines()
+
+        emu = Emulator()
+        emu.compile(code)
+        emu.get_memory()
+
+        return{
+            "memory": emu.MEMORY["data"],
+            "stack": emu.STACK["data"]
+        } 
 
     return app
 

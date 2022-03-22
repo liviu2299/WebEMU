@@ -9,13 +9,25 @@ code.append("push 5")
 print(code)
 
 
-emu.run(code)
-emu.get_regs()
-emu.get_memory()
+hex1 = "100350"
+hex2 = "100400"
 
-print(emu.REGISTERS)
-for i in emu.MEMORY["data"]:
-    print(i)
+i_hex1 = int(hex1, 16)
+i_hex2 = int(hex2, 16)
+
+result = hex(i_hex2 - i_hex1)
+
+
+
+print(hex1)
+print(i_hex1)
+print(result)
+
+
+hex3 = 0x50
+print(hex3)
+
+print(0x100400 - 0x100350)
 
 
 

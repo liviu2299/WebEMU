@@ -7,25 +7,27 @@ export default function Test() {
     const [input, setInput] = useState({});
     const [output, setOutput] = useState({});
 
-    /*useEffect(() => {
+    const handleRun = () => {
         (async () => {
-            const rawResponse = await fetch("/", {
+            const rawResponse = await fetch("/compute", {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ "data": "mov eax, 3" }),
+                body: JSON.stringify({ data: input }),
             });
+
             const content = await rawResponse.json();
 
-            console.log(content);
-        })();
-    }, []);*/
+            setOutput(content);
 
-    const handleSubmit = () => {
+        })();
+    }
+
+    const handleAssemble = () => {
         (async () => {
-            const rawResponse = await fetch("/compute", {
+            const rawResponse = await fetch("/compile", {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -51,7 +53,8 @@ export default function Test() {
                 placeHolder = "Type your code here"
                 onChange = {(e) => setInput(e.target.value)}
             />
-            <button onClick={ handleSubmit }>Submit</button>
+            <button onClick={ handleRun }>Run</button>
+            <button onClick={ handleAssemble }>Assemble</button>
             <div>
 
             </div>

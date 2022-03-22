@@ -1,6 +1,6 @@
 from unicorn import *
 from keystone import *
-from typing import List
+from enum import Enum
 
 from memory import Memory
 
@@ -10,6 +10,12 @@ uc_mode = UC_MODE_64
 ks_arch = KS_ARCH_X86
 ks_mode = KS_MODE_64
 
+# States
+class State(Enum):
+    RUNNING = 0
+    IDLE = 1
+    NOT_RUNNING = 2
+
 class Emulator:
 
     pc = "EIP"
@@ -18,7 +24,7 @@ class Emulator:
 
     def __init__(self):
         self.name = "x86-64bit"
-        self.state = None
+        self.state = State.IDLE
         self.REGISTERS = {
             # General
             "RAX": 0,
@@ -62,14 +68,14 @@ class Emulator:
             "EFLAGS": 0
         }
         self.MEMORY = {
-            "size": 0,
-            "starting_address": 0x1000000,
+            "size": 0x100400-0x100000,
+            "starting_address": 0x100000,
             "data": None
         }
         self.STACK = {
-            "size": 0,
-            "starting_address": 0x1150000,
-            "ending_address": 0x1200000,
+            "size": 0x100400-0x100350,
+            "starting_address": 0x100350,
+            "ending_address": 0x100400,
             "data": None
         }
         self.uc = self.initiate_uc()
@@ -103,8 +109,8 @@ class Emulator:
             # TODO: Map based on .size value
 
             uc.mem_map(self.MEMORY["starting_address"], 2 * 1024 * 1024) # 0x200 000
-            uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["starting_address"])
-            uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["ending_address"])
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["ending_address"])
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
 
         except UcError as e:
             print("ERROR: %s" % e)
@@ -128,16 +134,18 @@ class Emulator:
         Populates the Emulator Memory
         """
         try:
-            mem = self.uc.mem_read(self.MEMORY["starting_address"], 50)
+            mem = self.uc.mem_read(self.MEMORY["starting_address"], self.MEMORY["size"])
+            stack = self.uc.mem_read(self.STACK["starting_address"], self.STACK["size"])
         
         except UcError as e:
             print("ERROR: %s" % e)
         
         mem_list = list(mem)
-        # self.MEMORY["data"] = [Memory(hex(self.MEMORY["starting_address"] + i),mem_list[i]) for i in range(50)]
-        self.MEMORY["data"] = [{(hex(self.MEMORY["starting_address"] + i)): mem_list[i]} for i in range(50)]
+        stack_list = list(stack)
 
-        # TODO: Get stack memory
+        # self.MEMORY["data"] = [Memory(hex(self.MEMORY["starting_address"] + i),mem_list[i]) for i in range(50)]
+        self.MEMORY["data"] = [{(hex(self.MEMORY["starting_address"] + i)): mem_list[i]} for i in range(self.MEMORY["size"])]
+        self.STACK["data"] = [{(hex(self.STACK["starting_address"] + i)): stack_list[i]} for i in range(self.STACK["size"])]
 
         return
 
@@ -187,10 +195,25 @@ class Emulator:
 
         return True
 
+    def compile(self, code: list):
+        """
+        Compiling and mapping of the assembled code
+        """
+        self.state = State.RUNNING
+
+        encoding, count = self.assemble(code)
+        self.map_encoding(encoding)
+        
+        self.state = State.IDLE
+
+        return True
+
     def run(self, code: list):
         """
         Runs the emulation
         """
+
+        self.state = State.RUNNING
 
         encoding, count = self.assemble(code)
         self.map_encoding(encoding)
@@ -201,6 +224,8 @@ class Emulator:
         except UcError as e:
             print("ERROR: %s" % e)
             return False
+
+        self.state = State.IDLE
 
         return True
 
@@ -213,6 +238,8 @@ class Emulator:
         Stops the emulation
         """
         self.uc.emu_stop()
+
+        self.state = State.NOT_RUNNING
 
         return
     
