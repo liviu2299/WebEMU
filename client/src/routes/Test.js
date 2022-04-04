@@ -4,6 +4,11 @@ import Editor from '../components/Editor';
 import RTable from "../components/RTable";
 import MTable from "../components/MTable";
 
+import GRTable from "../components/GRTable";
+import ISTable from "../components/ISTable";
+import SRTable from "../components/SRTable";
+import FlagsTable from "../components/FlagsTable";
+
 export default function Test() {
 
     const initial_state = useMemo(() => ({
@@ -95,7 +100,11 @@ export default function Test() {
             />
             <button onClick={ handleRun }>Run</button>
             <button onClick={ handleAssemble }>Assemble</button>
-            <RTable emulator_data={emulator}/>
+            <GRTable emulator_data={emulator}/>
+            <ISTable emulator_data={emulator}/>
+            <SRTable emulator_data={emulator}/>
+            <FlagsTable emulator_data={emulator}/>
+
             <MTable emulator_data={emulator}/>
         </div>
     );

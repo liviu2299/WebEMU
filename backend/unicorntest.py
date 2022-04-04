@@ -49,6 +49,7 @@ try:
     r_ecx = mu.reg_read(UC_X86_REG_ECX)
     r_edx = mu.reg_read(UC_X86_REG_EDX)
     r_sp = mu.reg_read(UC_X86_REG_ESP)
+    flags = mu.reg_read(UC_X86_REG_RAX)
     print(">>> EAX = 0x%x" %r_eax)
     print(">>> EBX = 0x%x" %r_ebx)
     print(">>> ECX = 0x%x" %r_ecx)

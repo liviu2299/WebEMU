@@ -9,8 +9,8 @@ export default function Home() {
 
     const layout = [
         { i: "Editor", x: 0, y: 0, w: 5, h: 2, static: true },
-        { i: "Registers", x: 5, y: 0, w: 3, h: 2 },
-        { i: "Flags", x: 8, y: 0, w: 2, h: 2 },
+        { i: "Registers", x: 5, y: 0, w: 3, h: 2, static: true },
+        { i: "Flags", x: 8, y: 0, w: 2, h: 2,  static: true },
         { i: "Memory", x: 0, y: 2, w: 6, h: 2, static: true },
         { i: "Stack", x: 8, y: 2, w: 4, h: 2, static: true }
     ];
