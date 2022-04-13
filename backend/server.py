@@ -1,9 +1,6 @@
 from flask import Flask, request
 from emulator import Emulator
 
-import json
-
-
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -28,11 +25,19 @@ def create_app(test_config=None):
         emu.run(code)
         emu.update_data()
 
-        return{
-            "registers": emu.REGISTERS,
-            "memory": emu.MEMORY["data"],
-            "stack": emu.STACK["data"]
-        }   
+        emu.stop()
+
+        if emu.ERROR == "None":
+            return{
+                "registers": emu.REGISTERS,
+                "memory": emu.MEMORY["data"],
+                "stack": emu.STACK["data"],
+                "error": emu.ERROR
+            }   
+        else: 
+            return{
+            "error": emu.ERROR
+        }
 
     # TODO: Return errors to client
 
@@ -45,10 +50,16 @@ def create_app(test_config=None):
         emu.compile(code)
         emu.get_memory()
 
-        return{
-            "memory": emu.MEMORY["data"],
-            "stack": emu.STACK["data"]
-        } 
+        if emu.ERROR == "None":
+            return{
+                "memory": emu.MEMORY["data"],
+                "stack": emu.STACK["data"],
+                "error": emu.ERROR
+            }   
+        else: 
+            return{
+            "error": emu.ERROR
+        }
 
     return app
 

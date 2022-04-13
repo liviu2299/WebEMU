@@ -79,6 +79,7 @@ class Emulator:
             "data": None
         }
         self.uc = self.initiate_uc()
+        self.ERROR = "None"
 
         return
     
@@ -114,6 +115,7 @@ class Emulator:
 
         except UcError as e:
             print("ERROR: %s" % e)
+            self.ERROR = str(e)
 
         return uc
 
@@ -139,6 +141,7 @@ class Emulator:
         
         except UcError as e:
             print("ERROR: %s" % e)
+            self.ERROR = str(e)
         
         mem_list = list(mem)
         stack_list = list(stack)
@@ -153,8 +156,10 @@ class Emulator:
         """
         Updates internal data from the UC
         """
-        self.get_regs()
-        self.get_memory()
+        if self.ERROR == "None":
+            self.get_regs()
+            self.get_memory()
+            return False
 
         return True
 
@@ -173,6 +178,8 @@ class Emulator:
 
         except KsError as e:
             print("ERROR: %s" % e)
+            self.ERROR = str(e)
+            return (False, 0)
 
         return (encoding, count)
     
@@ -192,6 +199,7 @@ class Emulator:
 
         except UcError as e:
             print("ERROR: %s" % e)
+            self.ERROR = str(e)
 
         return True
 
@@ -202,7 +210,10 @@ class Emulator:
         self.state = State.RUNNING
 
         encoding, count = self.assemble(code)
-        self.map_encoding(encoding)
+        if encoding != False:
+            self.map_encoding(encoding)
+        else:
+            return False
         
         self.state = State.IDLE
 
@@ -216,13 +227,17 @@ class Emulator:
         self.state = State.RUNNING
 
         encoding, count = self.assemble(code)
-        self.map_encoding(encoding)
+        if encoding != False:
+            self.map_encoding(encoding)
+        else:
+            return False
 
         try:
             self.uc.emu_start(self.MEMORY["starting_address"], self.MEMORY["starting_address"] + len(encoding))
         
         except UcError as e:
             print("ERROR: %s" % e)
+            self.ERROR = str(e)
             return False
 
         self.state = State.IDLE

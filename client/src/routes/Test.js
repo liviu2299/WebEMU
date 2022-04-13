@@ -1,13 +1,12 @@
 import {useState, useEffect, useMemo} from "react";
 
 import Editor from '../components/Editor';
-import RTable from "../components/RTable";
-import MTable from "../components/MTable";
 
 import GRTable from "../components/GRTable";
 import ISTable from "../components/ISTable";
 import SRTable from "../components/SRTable";
 import FlagsTable from "../components/FlagsTable";
+import MTable from "../components/MTable";
 
 export default function Test() {
 
@@ -50,7 +49,8 @@ export default function Test() {
 
             EFLAGS: 0           
         },
-        MEMORY: new Array(1024).fill({ "addr": 0 })
+        MEMORY: new Array(1024).fill({ "0": 0 }),
+        ERROR: "None"
     }), [])
 
     const [input, setInput] = useState({});
@@ -68,8 +68,11 @@ export default function Test() {
             });
 
             const content = await rawResponse.json();
-;
-            setEmulator({MEMORY: content.memory, REGISTERS: content.registers})
+
+            if(content.error === "None")    
+                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error})
+            else
+                setEmulator({...emulator, ERROR: content.error})
 
         })();
     }
@@ -87,10 +90,19 @@ export default function Test() {
 
             const content = await rawResponse.json();
 
-            setEmulator({...emulator, MEMORY: content.memory})
+            if(content.error === "None")   
+                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error})
+            else
+                setEmulator({...emulator, ERROR: content.error})
 
         })();
     }   
+
+    /*
+    useEffect(() => {
+        console.log(emulator)
+    }, [emulator])
+    */
 
     return (
         <div>

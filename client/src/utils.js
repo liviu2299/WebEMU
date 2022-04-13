@@ -1,13 +1,10 @@
-export function decToHexString(number, size){
-
-    // Redundant
-    if (number < 0)
-    {
-      number = 0xFFFFFFFF + number + 1;
-    }
-    
+export function decToHexString(number, size){    
     let hex = Number(number).toString(16).toUpperCase();
     return "0x" + hex.padStart(size, "0");    
+}
+
+export function decToHex(number){
+  return Number(number).toString(16).toUpperCase();
 }
 
 export function decToBinaryString(number){
