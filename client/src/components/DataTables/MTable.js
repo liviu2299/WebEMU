@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { useTable, useBlockLayout } from 'react-table'
 import { FixedSizeList } from 'react-window'
 
-import { decToHex } from "../utils"
+import { decToHex } from "../../utils/utils"
 
 export default function RTable({ emulator_data }) {
 

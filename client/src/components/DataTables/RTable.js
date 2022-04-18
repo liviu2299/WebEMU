@@ -1,48 +1,30 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useTable } from 'react-table'
 
-import { decToHexString } from "../utils"
-
-export default function ISTable({ emulator_data }) {
+export default function RTable({ emulator_data }) {
 
     const data = useMemo(
-      () => [
-        {
-            name1: "RSI",
-            value1: decToHexString(emulator_data.REGISTERS["RSI"], 8),
-            name2: "RDI",
-            value2: decToHexString(emulator_data.REGISTERS["RDI"], 8),
-        },
-        {
-            name1: "RSP",
-            value1: decToHexString(emulator_data.REGISTERS["RSP"], 8),
-            name2: "RBP",
-            value2: decToHexString(emulator_data.REGISTERS["RBP"], 8),
-        },
-        {
-            name1: "RIP",
-            value1: decToHexString(emulator_data.REGISTERS["RIP"], 8),
-            name2: "EFLAGS",
-            value2: decToHexString(emulator_data.REGISTERS["EFLAGS"], 8),
-        },
-      ],
+      () => {
+        let temp = new Array(0)
+        for(let i=0; i< Object.keys(emulator_data.REGISTERS).length; i++){
+            temp.push({
+              name: Object.keys(emulator_data.REGISTERS)[i],
+              value: Object.values(emulator_data.REGISTERS)[i],
+            })
+        }
+        return temp
+      },
       [emulator_data]
     )
 
     const columns = useMemo(
         () => [
           {
-            accessor: 'name1', // accessor is the "key" in the data
+            accessor: 'name', // accessor is the "key" in the data
           },
           {
-            accessor: 'value1',
+            accessor: 'value',
           },
-          {
-            accessor: 'name2',
-          },
-          {
-            accessor: 'value2',
-          }
         ],
         []
     )
@@ -67,6 +49,9 @@ export default function ISTable({ emulator_data }) {
                     return (
                     <td
                         {...cell.getCellProps()}
+                        style={{
+                        border: 'solid 1px black'
+                        }}
                     >
                         {cell.render('Cell')}
                     </td>

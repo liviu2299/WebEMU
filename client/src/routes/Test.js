@@ -1,12 +1,15 @@
-import {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 
-import Editor from '../components/Editor';
+import Editor from '../components/Editor/Editor';
 
-import GRTable from "../components/GRTable";
-import ISTable from "../components/ISTable";
-import SRTable from "../components/SRTable";
-import FlagsTable from "../components/FlagsTable";
-import MTable from "../components/MTable";
+import GRTable from "../components/DataTables/GRTable";
+import ISTable from "../components/DataTables/ISTable";
+import SRTable from "../components/DataTables/SRTable";
+import FlagsTable from "../components/DataTables/FlagsTable";
+import MTable from "../components/DataTables/MTable";
+import RTable from "../components/DataTables/RTable";
+
+import Regs from "../components/Tables/Regs";
 
 export default function Test() {
 
@@ -98,11 +101,9 @@ export default function Test() {
         })();
     }   
 
-    /*
     useEffect(() => {
         console.log(emulator)
     }, [emulator])
-    */
 
     return (
         <div>
@@ -112,7 +113,10 @@ export default function Test() {
             />
             <button onClick={ handleRun }>Run</button>
             <button onClick={ handleAssemble }>Assemble</button>
+            
             <GRTable emulator_data={emulator}/>
+            <Regs emulator_data={emulator}/>
+            <RTable emulator_data={emulator}/>
             <ISTable emulator_data={emulator}/>
             <SRTable emulator_data={emulator}/>
             <FlagsTable emulator_data={emulator}/>

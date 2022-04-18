@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTable } from 'react-table'
 
-import { decToBinaryString } from "../utils"
+import { decToBinaryString } from "../../utils/utils"
 
 export default function FlagsTable({ emulator_data }) {
 
