@@ -4,6 +4,8 @@ import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/material.css'
 
+import 'codemirror/mode/gas/gas'
+
 import './Code.css'
 
 export default function Code(props) {
@@ -17,11 +19,9 @@ export default function Code(props) {
 		onChange(value)
 	}
 
-	function test(editor, data){
-		console.log("----")
-		console.log(editor)
-		console.log("----")
-		console.log(data.line+1 + ": " + editor.getLine(data.line) )
+	function onClick(editor, data){
+		//console.log("----")
+		//console.log(data.line+1 + ": " + editor.getLine(data.line) )
 	}
 
 	/*
@@ -36,9 +36,10 @@ export default function Code(props) {
 				options={{
 					lineWrapping: true,
 					theme: 'material',
+					mode: {name: 'gas', architecture:"x86"},
 					lineNumbers: true,
 				}}
-				
+				onCursor={onClick}
 			/>
   )
 }

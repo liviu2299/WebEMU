@@ -1,9 +1,12 @@
-function decToBinaryString(number){
-    return Number(number).toString(2).padStart(22, "0");  
+function decToASCII(number){
+    let no = String.fromCharCode(0);
+    let temp = String.fromCharCode(number);
+
+    if(temp === no) return '.'
+
+    return temp;
 }
 
-let temp = decToBinaryString(582)
-
-
-
-console.log(decToBinaryString(531).split("").reverse()[1])
+for(let i=0; i<255; i++){
+    console.log(i + ' ' + decToASCII(i))
+}

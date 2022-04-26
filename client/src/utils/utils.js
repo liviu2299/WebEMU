@@ -10,3 +10,8 @@ export function decToHex(number){
 export function decToBinaryString(number){
   return Number(number).toString(2).padStart(22, "0");  
 }
+
+export function decToASCII(number){ 
+  if(number <= 126 && number >= 32) return String.fromCharCode(number);
+  return '.';
+}

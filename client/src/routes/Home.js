@@ -7,8 +7,6 @@ import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 
 import Code from "../components/Code/Code"
-import MTable from "../components/DataTables/MTable";
-
 import Regs from "../components/Tables/Regs";
 import GRegs from "../components/Tables/GRegs";
 import ISRegs from "../components/Tables/ISRegs";
@@ -19,7 +17,6 @@ import Memory from "../components/Tables/Memory";
 import "./Layout.css"
 
 const EditorContainer = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
@@ -27,7 +24,6 @@ const EditorContainer = styled(Paper)(({ theme }) => ({
     position: 'relative'
   }));
 const RegsContainer = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
@@ -35,7 +31,6 @@ const RegsContainer = styled(Paper)(({ theme }) => ({
     position: 'relative'
   }));
 const FlagsContainer = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
@@ -43,7 +38,6 @@ const FlagsContainer = styled(Paper)(({ theme }) => ({
     position: 'relative'
   }));
 const SmthContainer = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
@@ -51,7 +45,6 @@ const SmthContainer = styled(Paper)(({ theme }) => ({
     position: 'relative'
   }));
 const MemoryContainer = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
@@ -190,8 +183,7 @@ export default function Home() {
                 </Grid>
               </Grid>
             </Grid> 
-
-            </Grid>
+          </Grid>
         </Box>
     )
 }
