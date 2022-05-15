@@ -2,8 +2,6 @@ from unicorn import *
 from keystone import *
 from unicorn.x86_const import *
 
-from memory import Memory
-
 ## 1) ASSEMBLER
 
 code = b"""

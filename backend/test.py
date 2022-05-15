@@ -3,18 +3,14 @@ from emulator import Emulator
 emu = Emulator()
 
 code = []
-code.append("mot eax, 3")
-code.append("push eax")
+code.append(".text:")
+code.append("mov eax, 3")
+code.append("push rax")
 print(code)
 
 emu.run(code)
 emu.update_data()
 
 print(emu.REGISTERS)
-print(type(str(emu.ERROR)))
-
-
-
-
 
 

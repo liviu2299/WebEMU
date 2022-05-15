@@ -1,8 +1,7 @@
 from unicorn import *
 from keystone import *
 from enum import Enum
-
-from memory import Memory
+from unicorn.x86_const import *
 
 # Constants
 uc_arch = UC_ARCH_X86
@@ -78,6 +77,7 @@ class Emulator:
             "ending_address": 0x100400,
             "data": None
         }
+        self.LOG = []
         self.uc = self.initiate_uc()
         self.ERROR = "None"
 
@@ -85,6 +85,13 @@ class Emulator:
     
     def __str__(self):
         return "Emulator object - x86-64bit"
+
+    def logger(self, msg: str):
+        """
+        Updates the log
+        """
+        self.LOG.append(msg)
+        return
 
     def get_reg_opcode(self, reg: str):
         """
@@ -104,18 +111,29 @@ class Emulator:
         """
         Initiates the compute unit
         """
+        self.LOG = []
+        self.LOG.append('>>> Initializing UC')
+
         try:
             uc = unicorn.Uc(uc_arch, uc_mode)
 
             # TODO: Map based on .size value
 
             uc.mem_map(self.MEMORY["starting_address"], 2 * 1024 * 1024) # 0x200 000
+
+            # Hooks
+            uc.hook_add(UC_HOOK_CODE, self.hook_code)
+            uc.hook_add(UC_HOOK_BLOCK, self.hook_block)
+            uc.hook_add(UC_HOOK_MEM_WRITE, self.hook_mem_access)
+            uc.hook_add(UC_HOOK_MEM_READ, self.hook_mem_access)
+
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["ending_address"])
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
 
         except UcError as e:
             print("ERROR: %s" % e)
             self.ERROR = str(e)
+            self.logger("COMPILER ERROR: %s" % e)
 
         return uc
 
@@ -142,6 +160,7 @@ class Emulator:
         except UcError as e:
             print("ERROR: %s" % e)
             self.ERROR = str(e)
+            self.logger("COMPILER ERROR: %s" % e)
         
         mem_list = list(mem)
         stack_list = list(stack)
@@ -179,6 +198,7 @@ class Emulator:
         except KsError as e:
             print("ERROR: %s" % e)
             self.ERROR = str(e)
+            self.logger("ASSEMBLER ERROR: %s" % e)
             return (False, 0)
 
         return (encoding, count)
@@ -200,6 +220,7 @@ class Emulator:
         except UcError as e:
             print("ERROR: %s" % e)
             self.ERROR = str(e)
+            self.logger("COMPILER ERROR: %s" % e)
 
         return True
 
@@ -238,6 +259,7 @@ class Emulator:
         except UcError as e:
             print("ERROR: %s" % e)
             self.ERROR = str(e)
+            self.logger("COMPILER ERROR: %s" % e)
             return False
 
         self.state = State.IDLE
@@ -253,8 +275,48 @@ class Emulator:
         Stops the emulation
         """
         self.uc.emu_stop()
-
+        self.LOG.append('>>> UC stopped')
         self.state = State.NOT_RUNNING
 
         return
     
+    # Debugging 
+
+    def hook_code(self, uc, address, size, user_data):
+        """
+        Hook for every instruction
+        """
+        self.logger('>>> Executing instruction at 0x%x, instruction size = 0x%x' % (address, size))
+    
+        return
+    
+    def hook_block(self, uc, address, size, user_data):
+        """
+        Hook for every block
+        """
+        self.logger('>>> Entering block at 0x%x' % (address))
+        return
+
+    def hook_mem_access(self, uc, access, address, size, value, user_data):
+        """
+        Hook for memory access
+        """
+        if access == UC_MEM_WRITE:
+            self.logger(">>> Write: *%#x = %#x (size = %u)"% (address, value, size))
+        elif access == UC_MEM_READ:
+            self.logger(">>> Read: *%#x (size = %u)" % (address, size))
+        return
+    
+    def hook_syscall(self, uc, address, size, user_data):
+        """
+        Hook for syscall
+        """
+        self.logger('>>> Syscall')
+        return
+
+    def hook_interrupt(self, uc, no, data):
+        """
+        Hook for interruptions
+        """
+        self.logger(">>> Interrupt: %x" % (no))
+        return

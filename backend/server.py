@@ -21,6 +21,8 @@ def create_app(test_config=None):
         data = request.json['data']
         code = data.splitlines()
 
+        print(code)
+        
         emu = Emulator()
         emu.run(code)
         emu.update_data()
@@ -32,14 +34,14 @@ def create_app(test_config=None):
                 "registers": emu.REGISTERS,
                 "memory": emu.MEMORY["data"],
                 "stack": emu.STACK["data"],
-                "error": emu.ERROR
+                "error": emu.ERROR,
+                'log': emu.LOG
             }   
         else: 
             return{
-            "error": emu.ERROR
+            "error": emu.ERROR,
+            'log': emu.LOG
         }
-
-    # TODO: Return errors to client
 
     @app.route("/compile", methods=['POST'])
     def compile():
@@ -54,11 +56,13 @@ def create_app(test_config=None):
             return{
                 "memory": emu.MEMORY["data"],
                 "stack": emu.STACK["data"],
-                "error": emu.ERROR
+                "error": emu.ERROR,
+                'log': emu.LOG
             }   
         else: 
             return{
-            "error": emu.ERROR
+            "error": emu.ERROR,
+            'log': emu.LOG
         }
 
     return app

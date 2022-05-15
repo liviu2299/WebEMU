@@ -2,7 +2,30 @@ import React, { useMemo } from 'react'
 import { useTable, useBlockLayout } from 'react-table'
 import { FixedSizeList } from 'react-window'
 
+import styled from 'styled-components'
+
 import { decToHex, decToASCII } from "../../utils/utils"
+
+const Styles = styled.div`
+.table {
+
+  .tr {
+    .td:first-child{
+      width: 4rem;
+      min-width: 4rem;
+      max-width: 4rem;
+      border-right: 1px solid black;
+    }
+    .td:nth-child(17){
+      border-right: 1px solid black;;
+    }
+    text-align: center;
+
+  }
+  \
+
+}
+`
 
 export default function Memory({ emulator_data }) {
 
@@ -191,18 +214,20 @@ export default function Memory({ emulator_data }) {
     )
 
     return (
+      <Styles>
         <div {...getTableProps()} className="table">
 
-          <div {...getTableBodyProps()}>
-            <FixedSizeList
-              height={300}
-              itemCount={rows.length}
-              itemSize={20}
-              width="100%"
-            >
-              {RenderRow}
-            </FixedSizeList>
-          </div>
+        <div {...getTableBodyProps()}>
+          <FixedSizeList
+            height={300}
+            itemCount={rows.length}
+            itemSize={20}
+            width="100%"
+          >
+            {RenderRow}
+          </FixedSizeList>
         </div>
+        </div>
+      </Styles>
       )
 }

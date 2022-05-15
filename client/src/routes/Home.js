@@ -13,6 +13,7 @@ import ISRegs from "../components/Tables/ISRegs";
 import SRegs from "../components/Tables/SRegs";
 import Flags from "../components/Tables/Flags";
 import Memory from "../components/Tables/Memory";
+import Log from "../components/Log/Log";
 
 import "./Layout.css"
 
@@ -37,13 +38,20 @@ const FlagsContainer = styled(Paper)(({ theme }) => ({
     height: '50vh',
     position: 'relative'
   }));
-const SmthContainer = styled(Paper)(({ theme }) => ({
+const LogContainer = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
     height: '50vh',
     position: 'relative'
   }));
+const MappingContainer = styled(Paper)(({ theme }) => ({
+    ...theme.typography.body2,
+    color: theme.palette.text.primary,
+    backgroundColor: "antiquewhite",
+    height: '50vh',
+    position: 'relative'
+}));
 const MemoryContainer = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
     color: theme.palette.text.primary,
@@ -94,7 +102,8 @@ export default function Home() {
             EFLAGS: 0           
         },
         MEMORY: new Array(1024).fill({ "0": 0 }),
-        ERROR: "None"
+        ERROR: "None",
+        LOG: []
     }), [])
 
     const [input, setInput] = useState('');
@@ -115,9 +124,9 @@ export default function Home() {
             const content = await rawResponse.json();
 
             if(content.error === "None")    
-                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error})
+                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log})
             else
-                setEmulator({...emulator, ERROR: content.error})
+                setEmulator({...emulator, ERROR: content.error, LOG: content.log})
 
         })();
     }
@@ -136,12 +145,16 @@ export default function Home() {
             const content = await rawResponse.json();
 
             if(content.error === "None")   
-                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error})
+                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error, LOG: content.log})
             else
-                setEmulator({...emulator, ERROR: content.error})
+                setEmulator({...emulator, ERROR: content.error, LOG: content.log})
 
         })();
     }   
+
+    useEffect(() => {
+      console.log(emulator)
+    }, [emulator])
 
     return (    
         <Box>
@@ -173,8 +186,14 @@ export default function Home() {
                     <Flags emulator_data={emulator}/>
                   </FlagsContainer>
               		</Grid>
-              	<Grid item xs={6}>
-                  <SmthContainer>Other</SmthContainer>
+              	<Grid item xs={3}>
+                  <LogContainer>
+                    Logs
+                    <Log logs={emulator.LOG}/>
+                  </LogContainer>
+                </Grid>
+                <Grid item xs={3}>
+                  <MappingContainer>Other</MappingContainer>
                 </Grid>
                 <Grid item xs={12}>
                   <MemoryContainer>
