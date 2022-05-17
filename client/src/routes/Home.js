@@ -131,6 +131,27 @@ export default function Home() {
         })();
     }
 
+    const handleStep = () => {
+      (async () => {
+          const rawResponse = await fetch("/step", {
+              method: "POST",
+              headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ data: input }),
+          });
+
+          const content = await rawResponse.json();
+
+          if(content.error === "None")    
+              setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log})
+          else
+              setEmulator({...emulator, ERROR: content.error, LOG: content.log})
+
+      })();
+    }
+
     const handleAssemble = () => {
         (async () => {
             const rawResponse = await fetch("/compile", {
@@ -162,6 +183,7 @@ export default function Home() {
             Navbar
           	<button onClick={ handleRun }>Run</button>
             <button onClick={ handleAssemble }>Assemble</button>
+            <button onClick={ handleStep }>Step</button>
 					</div>
           <Grid container spacing={2}>
 

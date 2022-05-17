@@ -1,3 +1,4 @@
+from this import d
 from unicorn import *
 from keystone import *
 from enum import Enum
@@ -74,7 +75,6 @@ class Emulator:
         self.STACK = {
             "size": 0x100400-0x100350,
             "starting_address": 0x100350,
-            "ending_address": 0x100400,
             "data": None
         }
         self.LOG = []
@@ -112,11 +112,10 @@ class Emulator:
         Initiates the compute unit
         """
         self.LOG = []
-        self.LOG.append('>>> Initializing UC')
-
+    
         try:
             uc = unicorn.Uc(uc_arch, uc_mode)
-
+            
             # TODO: Map based on .size value
 
             uc.mem_map(self.MEMORY["starting_address"], 2 * 1024 * 1024) # 0x200 000
@@ -127,8 +126,10 @@ class Emulator:
             uc.hook_add(UC_HOOK_MEM_WRITE, self.hook_mem_access)
             uc.hook_add(UC_HOOK_MEM_READ, self.hook_mem_access)
 
-            uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["ending_address"])
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["starting_address"] + self.STACK["size"])
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
+
+            self.initial_context = uc.context_save()
 
         except UcError as e:
             print("ERROR: %s" % e)
@@ -136,6 +137,23 @@ class Emulator:
             self.logger("COMPILER ERROR: %s" % e)
 
         return uc
+
+    def update_uc_parameters(self, options):
+        """
+        Updates memory structure
+        """
+        self.stop()
+        
+        if(options["RAM_starting_address"] != 'None'):   
+            self.MEMORY["starting_address"] = options["RAM_starting_address"]
+        if(options["RAM_size"] != 'None'):
+            self.MEMORY["size"] = options["RAM_size"]
+        if(options["STACK_starting_address"] != 'None'):  
+            self.STACK["starting_address"] = options["STACK_starting_address"]
+        if(options["STACK_size"] != 'None'):  
+            self.STACK["size"] = options["STACK_size"]
+
+        return
 
     def get_regs(self):
         """
@@ -200,6 +218,8 @@ class Emulator:
             self.ERROR = str(e)
             self.logger("ASSEMBLER ERROR: %s" % e)
             return (False, 0)
+
+        self.logger(">>> Code Assembled Successfully")
 
         return (encoding, count)
     
@@ -274,9 +294,73 @@ class Emulator:
         """
         Stops the emulation
         """
-        self.uc.emu_stop()
-        self.LOG.append('>>> UC stopped')
+        self.uc.context_restore(self.initial_context)
         self.state = State.NOT_RUNNING
+
+        self.reset()
+        self.uc.emu_stop()
+
+        return
+    
+    def reset(self):
+        """
+        Resets emulator class values
+        """
+        self.state = State.IDLE
+        self.REGISTERS = {
+            # General
+            "RAX": 0,
+            "RBX": 0,
+            "RCX": 0,
+            "RDX": 0,
+
+            "AX": 0,
+            "BX": 0,
+            "CX": 0,
+            "DX": 0,
+
+            "AH": 0,
+            "BH": 0,
+            "CH": 0,
+            "DH": 0,
+
+            "AL": 0,
+            "BL": 0,
+            "CL": 0,
+            "DL": 0,
+
+            # Index & Pointers
+            "RSI": 0,
+            "RDI": 0,
+
+            "RBP": 0,
+            "RSP": 0,   # sp
+
+            "RIP": 0,   # pc
+
+            # PGR Registers
+            "CS": 0,
+            "DS": 0,
+            "ES": 0,
+            "FS": 0,
+            "SS": 0,
+            "GS": 0,
+
+            # Flags
+            "EFLAGS": 0
+        }
+        self.MEMORY = {
+            "size": 0x100400-0x100000,
+            "starting_address": 0x100000,
+            "data": None
+        }
+        self.STACK = {
+            "size": 0x100400-0x100350,
+            "starting_address": 0x100350,
+            "data": None
+        }
+        self.LOG = []
+        self.ERROR = "None"
 
         return
     
