@@ -11,6 +11,7 @@ import Regs from "../components/Tables/Regs";
 import GRegs from "../components/Tables/GRegs";
 import ISRegs from "../components/Tables/ISRegs";
 import SRegs from "../components/Tables/SRegs";
+import G64Regs from "../components/Tables/G64Regs";
 import Flags from "../components/Tables/Flags";
 import Memory from "../components/Tables/Memory";
 import Log from "../components/Log/Log";
@@ -98,6 +99,15 @@ export default function Home() {
             FS: 0,
             SS: 0,
             GS: 0,
+
+            R8: 0,
+            R9: 0,
+            R10: 0,
+            R11: 0,
+            R12: 0,
+            R13: 0,
+            R14: 0,
+            R15: 0,
 
             EFLAGS: 0           
         },
@@ -202,6 +212,7 @@ export default function Home() {
 										<GRegs emulator_data={emulator}/>
                     <ISRegs emulator_data={emulator}/>
 										<SRegs emulator_data={emulator}/>
+                    <G64Regs emulator_data={emulator}/>
 									</RegsContainer>
                 </Grid>
               	<Grid item xs={2.5}>

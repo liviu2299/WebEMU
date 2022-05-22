@@ -4,16 +4,16 @@ import { FixedSizeList } from 'react-window'
 
 import styled from 'styled-components'
 
-import { decToHex, decToASCII } from "../../utils/utils"
+import { decToHex, decToHexString, decToASCII } from "../../utils/utils"
 
 const Styles = styled.div`
 .table {
 
   .tr {
     .td:first-child{
-      width: 4rem;
-      min-width: 4rem;
-      max-width: 4rem;
+      width: 5rem;
+      min-width: 5rem;
+      max-width: 5rem;
       border-right: 1px solid black;
     }
     .td:nth-child(17){
@@ -35,7 +35,7 @@ export default function Memory({ emulator_data }) {
         for(let i=0; i<emulator_data.MEMORY.length; i++){
           if(i%16 === 0){
             temp.push({
-              addr: decToHex(Object.keys(emulator_data.MEMORY[i])[0]),
+              addr: decToHexString(Object.keys(emulator_data.MEMORY[i])[0]),
               value1: decToHex(Object.values(emulator_data.MEMORY[i])[0]),
               value2: decToHex(Object.values(emulator_data.MEMORY[i+1])[0]),
               value3: decToHex(Object.values(emulator_data.MEMORY[i+2])[0]),
