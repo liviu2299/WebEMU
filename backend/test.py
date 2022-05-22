@@ -3,35 +3,15 @@ from emulator import Emulator
 emu = Emulator()
 
 code = []
-code.append("mov eax, 3")
+code.append("mov rax, 3")
+code.append("mov rbx, 4")
+code.append("mov rcx, 5")
 
 print(code)
 
-emu.run(code)
-emu.update_data()
 
-print(emu.REGISTERS)
 
-context = emu.uc.context_save()
-emu.stop()
+print(emu.state)
 
-##########
 
-code = []
-code.append("mov ebx, 2")
-
-print(code)
-
-emu.run(code)
-emu.update_data()
-
-print(emu.REGISTERS)
-
-########
-
-emu.uc.context_restore(context)
-
-emu.update_data()
-
-print(emu.REGISTERS)
 

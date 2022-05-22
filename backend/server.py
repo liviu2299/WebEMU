@@ -17,6 +17,8 @@ def create_app(test_config=None):
 
     emu = Emulator()
 
+    # TODO: Bug fix when first line is empty
+
     @app.route("/compute", methods=['POST'])
     def compute():
         data = request.json['data']
@@ -32,12 +34,14 @@ def create_app(test_config=None):
                     "memory": emu.MEMORY["data"],
                     "stack": emu.STACK["data"],
                     "error": emu.ERROR,
-                    'log': emu.LOG
+                    'log': emu.LOG,
+                    'state': int(emu.state)
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
-                'log': emu.LOG
+                'log': emu.LOG,
+                'state': int(emu.state)
             }
         finally:
             emu.stop()
@@ -56,43 +60,41 @@ def create_app(test_config=None):
                     "memory": emu.MEMORY["data"],
                     "stack": emu.STACK["data"],
                     "error": emu.ERROR,
-                    'log': emu.LOG
+                    'log': emu.LOG,
+                    'state': int(emu.state)
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
-                'log': emu.LOG
+                'log': emu.LOG,
+                'state': int(emu.state)
             }
         finally:
             emu.stop()
-
-        
-    emu = Emulator()
 
     @app.route("/step", methods=['POST'])
     def step():
         data = request.json['data']
         code = data.splitlines()
         
-        emu.run(code)
+        emu.step2()
         emu.update_data()
 
-        try:
-            if emu.ERROR == "None":
-                return{
-                    "registers": emu.REGISTERS,
-                    "memory": emu.MEMORY["data"],
-                    "stack": emu.STACK["data"],
-                    "error": emu.ERROR,
-                    'log': emu.LOG
-                }   
-            else: 
-                return{
+        if emu.ERROR == "None":
+            return{
+                "registers": emu.REGISTERS,
+                "memory": emu.MEMORY["data"],
+                "stack": emu.STACK["data"],
                 "error": emu.ERROR,
-                'log': emu.LOG
-            }
-        finally:
-            emu.stop()
+                'log': emu.LOG,
+                'state': int(emu.state)
+            }   
+        else: 
+            return{
+            "error": emu.ERROR,
+            'log': emu.LOG,
+            'state': int(emu.state)
+        }
 
     return app
 

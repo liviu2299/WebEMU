@@ -103,7 +103,8 @@ export default function Home() {
         },
         MEMORY: new Array(1024).fill({ "0": 0 }),
         ERROR: "None",
-        LOG: []
+        LOG: [],
+        STATE: 0
     }), [])
 
     const [input, setInput] = useState('');
@@ -124,9 +125,9 @@ export default function Home() {
             const content = await rawResponse.json();
 
             if(content.error === "None")    
-                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log})
+                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state})
             else
-                setEmulator({...emulator, ERROR: content.error, LOG: content.log})
+                setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 
         })();
     }
@@ -145,9 +146,9 @@ export default function Home() {
           const content = await rawResponse.json();
 
           if(content.error === "None")    
-              setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log})
+              setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state})
           else
-              setEmulator({...emulator, ERROR: content.error, LOG: content.log})
+              setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 
       })();
     }
@@ -166,9 +167,9 @@ export default function Home() {
             const content = await rawResponse.json();
 
             if(content.error === "None")   
-                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error, LOG: content.log})
+                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error, LOG: content.log, STATE: content.state})
             else
-                setEmulator({...emulator, ERROR: content.error, LOG: content.log})
+                setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 
         })();
     }   

@@ -1,7 +1,7 @@
-from this import d
 from unicorn import *
 from keystone import *
-from enum import Enum
+from capstone import *
+from enum import IntEnum
 from unicorn.x86_const import *
 
 # Constants
@@ -11,10 +11,11 @@ ks_arch = KS_ARCH_X86
 ks_mode = KS_MODE_64
 
 # States
-class State(Enum):
+class State(IntEnum):
     RUNNING = 0
     IDLE = 1
     NOT_RUNNING = 2
+    STEP = 3
 
 class Emulator:
 
@@ -77,6 +78,10 @@ class Emulator:
             "starting_address": 0x100350,
             "data": None
         }
+        self.start_addr = self.MEMORY['starting_address']
+        self.step_index = 0
+        self.stop_now = False
+
         self.LOG = []
         self.uc = self.initiate_uc()
         self.ERROR = "None"
@@ -128,6 +133,8 @@ class Emulator:
 
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["starting_address"] + self.STACK["size"])
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
+
+            self.start_addr = self.MEMORY['starting_address']
 
             self.initial_context = uc.context_save()
 
@@ -212,6 +219,7 @@ class Emulator:
         try:
             ks = Ks(ks_arch, ks_mode)
             encoding, count = ks.asm(binary_code)
+            self.end_addr = self.MEMORY["starting_address"] + len(encoding)
 
         except KsError as e:
             print("ERROR: %s" % e)
@@ -223,6 +231,41 @@ class Emulator:
 
         return (encoding, count)
     
+    def assemble_instruction(self, code):
+        """
+        Assembles one instruction
+        """
+        binary_code = code.encode("utf-8")
+
+        try:
+            ks = Ks(ks_arch, ks_mode)
+            encoding, count = ks.asm(binary_code)
+
+        except KsError as e:
+            print("ERROR: %s" % e)
+            self.ERROR = str(e)
+            self.logger("ASSEMBLER ERROR: %s" % e)
+            return False
+        
+        return encoding
+
+    def dissasemble_instruction(self, code, addr):
+        """
+        Return dissasembled string instruction
+        """
+        try:
+            cs = Cs(CS_ARCH_X86, CS_MODE_64)
+            instr = cs.disasm(bytes(code),addr)
+
+        except CsError as e:
+            print("ERROR: %s" % e)
+            self.ERROR = str(e)
+            self.logger("DISSASEMBLER ERROR: %s" % e)
+            return False
+        
+        for i in instr:
+            return i
+
     def map_encoding(self, encoding: list):
         """
         Map the encoded instructions in memory
@@ -264,7 +307,6 @@ class Emulator:
         """
         Runs the emulation
         """
-
         self.state = State.RUNNING
 
         encoding, count = self.assemble(code)
@@ -286,8 +328,23 @@ class Emulator:
 
         return True
 
-    # TODO: Sequentially computing
-    def step(self):
+    def step2(self):
+        self.state = State.STEP
+        self.stop_now = False
+
+        if(self.get_reg_value("RIP") == self.end_addr):
+            self.state = State.IDLE
+            return
+
+        try:
+            self.uc.emu_start(self.start_addr, self.end_addr)
+        
+        except UcError as e:
+            print("ERROR: %s" % e)
+            self.ERROR = str(e)
+            self.logger("COMPILER ERROR: %s" % e)
+            return False
+
         return
 
     def stop(self):
@@ -362,22 +419,40 @@ class Emulator:
         self.LOG = []
         self.ERROR = "None"
 
+        self.start_addr = self.MEMORY["starting_address"]
+        self.step_index = 0
+        self.stop_now = False
+
         return
     
-    # Debugging 
+    # Debugging / Hooks
 
     def hook_code(self, uc, address, size, user_data):
         """
         Hook for every instruction
         """
-        self.logger('>>> Executing instruction at 0x%x, instruction size = 0x%x' % (address, size))
-    
+        
+        if self.stop_now:
+            self.start_addr = self.get_reg_value("RIP")
+            self.uc.emu_stop()
+            return
+
+        code = self.uc.mem_read(address, size)
+        instruction = self.dissasemble_instruction(code, address)
+        self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address, size))
+
+        if self.state == State.STEP:
+            self.stop_now = True
+
         return
-    
+
     def hook_block(self, uc, address, size, user_data):
         """
         Hook for every block
         """
+        if(self.state == State.STEP):
+            return
+
         self.logger('>>> Entering block at 0x%x' % (address))
         return
 
