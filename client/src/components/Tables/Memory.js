@@ -22,8 +22,6 @@ const Styles = styled.div`
     text-align: center;
 
   }
-  \
-
 }
 `
 
@@ -32,48 +30,48 @@ export default function Memory({ emulator_data }) {
     const data = useMemo(
       () => {
         let temp = new Array(0)
-        for(let i=0; i<emulator_data.MEMORY.length; i++){
+        for(let i=0; i<emulator_data.MEMORY.data.length; i++){
           if(i%16 === 0){
             temp.push({
-              addr: decToHexString(Object.keys(emulator_data.MEMORY[i])[0]),
-              value1: decToHex(Object.values(emulator_data.MEMORY[i])[0]),
-              value2: decToHex(Object.values(emulator_data.MEMORY[i+1])[0]),
-              value3: decToHex(Object.values(emulator_data.MEMORY[i+2])[0]),
-              value4: decToHex(Object.values(emulator_data.MEMORY[i+3])[0]),
-              value5: decToHex(Object.values(emulator_data.MEMORY[i+4])[0]),
-              value6: decToHex(Object.values(emulator_data.MEMORY[i+5])[0]),
-              value7: decToHex(Object.values(emulator_data.MEMORY[i+6])[0]),
-              value8: decToHex(Object.values(emulator_data.MEMORY[i+7])[0]),
-              value9: decToHex(Object.values(emulator_data.MEMORY[i+8])[0]),
-              value10: decToHex(Object.values(emulator_data.MEMORY[i+9])[0]),
-              value11: decToHex(Object.values(emulator_data.MEMORY[i+10])[0]),
-              value12: decToHex(Object.values(emulator_data.MEMORY[i+11])[0]),
-              value13: decToHex(Object.values(emulator_data.MEMORY[i+12])[0]),
-              value14: decToHex(Object.values(emulator_data.MEMORY[i+13])[0]),
-              value15: decToHex(Object.values(emulator_data.MEMORY[i+14])[0]),
-              value16: decToHex(Object.values(emulator_data.MEMORY[i+15])[0]),
-              ascii1: decToASCII(Object.values(emulator_data.MEMORY[i])[0]),
-              ascii2: decToASCII(Object.values(emulator_data.MEMORY[i+1])[0]),
-              ascii3: decToASCII(Object.values(emulator_data.MEMORY[i+2])[0]),
-              ascii4: decToASCII(Object.values(emulator_data.MEMORY[i+3])[0]),
-              ascii5: decToASCII(Object.values(emulator_data.MEMORY[i+4])[0]),
-              ascii6: decToASCII(Object.values(emulator_data.MEMORY[i+5])[0]),
-              ascii7: decToASCII(Object.values(emulator_data.MEMORY[i+6])[0]),
-              ascii8: decToASCII(Object.values(emulator_data.MEMORY[i+7])[0]),
-              ascii9: decToASCII(Object.values(emulator_data.MEMORY[i+8])[0]),
-              ascii10: decToASCII(Object.values(emulator_data.MEMORY[i+9])[0]),
-              ascii11: decToASCII(Object.values(emulator_data.MEMORY[i+10])[0]),
-              ascii12: decToASCII(Object.values(emulator_data.MEMORY[i+11])[0]),
-              ascii13: decToASCII(Object.values(emulator_data.MEMORY[i+12])[0]),
-              ascii14: decToASCII(Object.values(emulator_data.MEMORY[i+13])[0]),
-              ascii15: decToASCII(Object.values(emulator_data.MEMORY[i+14])[0]),
-              ascii16: decToASCII(Object.values(emulator_data.MEMORY[i+15])[0]),
+              addr: decToHexString(Object.keys(emulator_data.MEMORY.data[i])[0]),
+              value1: decToHex(Object.values(emulator_data.MEMORY.data[i])[0]),
+              value2: decToHex(Object.values(emulator_data.MEMORY.data[i+1])[0]),
+              value3: decToHex(Object.values(emulator_data.MEMORY.data[i+2])[0]),
+              value4: decToHex(Object.values(emulator_data.MEMORY.data[i+3])[0]),
+              value5: decToHex(Object.values(emulator_data.MEMORY.data[i+4])[0]),
+              value6: decToHex(Object.values(emulator_data.MEMORY.data[i+5])[0]),
+              value7: decToHex(Object.values(emulator_data.MEMORY.data[i+6])[0]),
+              value8: decToHex(Object.values(emulator_data.MEMORY.data[i+7])[0]),
+              value9: decToHex(Object.values(emulator_data.MEMORY.data[i+8])[0]),
+              value10: decToHex(Object.values(emulator_data.MEMORY.data[i+9])[0]),
+              value11: decToHex(Object.values(emulator_data.MEMORY.data[i+10])[0]),
+              value12: decToHex(Object.values(emulator_data.MEMORY.data[i+11])[0]),
+              value13: decToHex(Object.values(emulator_data.MEMORY.data[i+12])[0]),
+              value14: decToHex(Object.values(emulator_data.MEMORY.data[i+13])[0]),
+              value15: decToHex(Object.values(emulator_data.MEMORY.data[i+14])[0]),
+              value16: decToHex(Object.values(emulator_data.MEMORY.data[i+15])[0]),
+              ascii1: decToASCII(Object.values(emulator_data.MEMORY.data[i])[0]),
+              ascii2: decToASCII(Object.values(emulator_data.MEMORY.data[i+1])[0]),
+              ascii3: decToASCII(Object.values(emulator_data.MEMORY.data[i+2])[0]),
+              ascii4: decToASCII(Object.values(emulator_data.MEMORY.data[i+3])[0]),
+              ascii5: decToASCII(Object.values(emulator_data.MEMORY.data[i+4])[0]),
+              ascii6: decToASCII(Object.values(emulator_data.MEMORY.data[i+5])[0]),
+              ascii7: decToASCII(Object.values(emulator_data.MEMORY.data[i+6])[0]),
+              ascii8: decToASCII(Object.values(emulator_data.MEMORY.data[i+7])[0]),
+              ascii9: decToASCII(Object.values(emulator_data.MEMORY.data[i+8])[0]),
+              ascii10: decToASCII(Object.values(emulator_data.MEMORY.data[i+9])[0]),
+              ascii11: decToASCII(Object.values(emulator_data.MEMORY.data[i+10])[0]),
+              ascii12: decToASCII(Object.values(emulator_data.MEMORY.data[i+11])[0]),
+              ascii13: decToASCII(Object.values(emulator_data.MEMORY.data[i+12])[0]),
+              ascii14: decToASCII(Object.values(emulator_data.MEMORY.data[i+13])[0]),
+              ascii15: decToASCII(Object.values(emulator_data.MEMORY.data[i+14])[0]),
+              ascii16: decToASCII(Object.values(emulator_data.MEMORY.data[i+15])[0]),
             })
           }
         }
         return temp
       },
-      [emulator_data]
+      [emulator_data.MEMORY]
     )
 
     const columns = useMemo(

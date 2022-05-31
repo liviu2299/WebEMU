@@ -15,6 +15,10 @@ import G64Regs from "../components/Tables/G64Regs";
 import Flags from "../components/Tables/Flags";
 import Memory from "../components/Tables/Memory";
 import Log from "../components/Log/Log";
+import Mapping from "../components/Tables/Mapping";
+import Stack from "../components/Tables/Stack";
+
+import { handleRun, handleAssemble, handleStep } from "../api/requests";
 
 import "./Layout.css"
 
@@ -50,8 +54,15 @@ const MappingContainer = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
     color: theme.palette.text.primary,
     backgroundColor: "antiquewhite",
-    height: '50vh',
+    height: '20vh',
     position: 'relative'
+}));
+const StackContainer = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  color: theme.palette.text.primary,
+  backgroundColor: "antiquewhite",
+  height: '30vh',
+  position: 'relative'
 }));
 const MemoryContainer = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -111,79 +122,23 @@ export default function Home() {
 
             EFLAGS: 0           
         },
-        MEMORY: new Array(1024).fill({ "0": 0 }),
+        MEMORY: {
+          data: new Array(1024).fill({ "0": 0 }),
+          size: 0x100400-0x100000,
+          starting_address: 0x100000,
+        },
+        STACK: {
+          size: 0x100400-0x100350,
+          starting_address: 0x100350,
+        },
         ERROR: "None",
         LOG: [],
         STATE: 0
     }), [])
 
     const [input, setInput] = useState('');
-
     const [emulator, setEmulator] = useState(initial_state);
-
-    const handleRun = () => {
-        (async () => {
-            const rawResponse = await fetch("/compute", {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ data: input }),
-            });
-
-            const content = await rawResponse.json();
-
-            if(content.error === "None")    
-                setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state})
-            else
-                setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
-
-        })();
-    }
-
-    const handleStep = () => {
-      (async () => {
-          const rawResponse = await fetch("/step", {
-              method: "POST",
-              headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ data: input }),
-          });
-
-          const content = await rawResponse.json();
-
-          if(content.error === "None")    
-              setEmulator({MEMORY: content.memory, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state})
-          else
-              setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
-
-      })();
-    }
-
-    const handleAssemble = () => {
-        (async () => {
-            const rawResponse = await fetch("/compile", {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ data: input }),
-            });
-
-            const content = await rawResponse.json();
-
-            if(content.error === "None")   
-                setEmulator({...emulator, MEMORY: content.memory, ERROR: content.error, LOG: content.log, STATE: content.state})
-            else
-                setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
-
-        })();
-    }   
-
+  
     useEffect(() => {
       console.log(emulator)
     }, [emulator])
@@ -192,9 +147,9 @@ export default function Home() {
         <Box>
           <div className="navbar">
             Navbar
-          	<button onClick={ handleRun }>Run</button>
-            <button onClick={ handleAssemble }>Assemble</button>
-            <button onClick={ handleStep }>Step</button>
+          	<button onClick={ () => handleRun(setEmulator,input,emulator) }>Run</button>
+            <button onClick={ () => handleAssemble(setEmulator,input,emulator) }>Assemble</button>
+            <button onClick={ () => handleStep(setEmulator,input,emulator) }>Step</button>
 					</div>
           <Grid container spacing={2}>
 
@@ -227,7 +182,13 @@ export default function Home() {
                   </LogContainer>
                 </Grid>
                 <Grid item xs={3}>
-                  <MappingContainer>Other</MappingContainer>
+                  <MappingContainer>
+                    Other
+                    <Mapping emulator_data={emulator}/>
+                  </MappingContainer>
+                  <StackContainer>
+                    <Stack emulator_data={emulator}/>
+                  </StackContainer>
                 </Grid>
                 <Grid item xs={12}>
                   <MemoryContainer>
