@@ -84,7 +84,7 @@ export default function Stack({ emulator_data }) {
 
         <div {...getTableBodyProps()}>
           <FixedSizeList
-            height={224}
+            height={205}
             itemCount={rows.length}
             itemSize={20}
             width="100%"

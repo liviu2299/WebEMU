@@ -2,9 +2,8 @@ import React, {useState, useEffect, useMemo} from "react";
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
+import {NavbarContainer,EditorContainer,RegsContainer,FlagsContainer,LogContainer,MappingContainer,StackContainer,MemoryContainer} from './styles';
 
 import Code from "../components/Code/Code"
 import Regs from "../components/Tables/Regs";
@@ -20,121 +19,9 @@ import Stack from "../components/Tables/Stack";
 
 import { handleRun, handleAssemble, handleStep } from "../api/requests";
 
-import "./Layout.css"
-
-const EditorContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '90vh',
-    position: 'relative'
-  }));
-const RegsContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '50vh',
-    position: 'relative'
-  }));
-const FlagsContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '50vh',
-    position: 'relative'
-  }));
-const LogContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '50vh',
-    position: 'relative'
-  }));
-const MappingContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '20vh',
-    position: 'relative'
-}));
-const StackContainer = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body2,
-  color: theme.palette.text.primary,
-  backgroundColor: "antiquewhite",
-  height: '30vh',
-  position: 'relative'
-}));
-const MemoryContainer = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    color: theme.palette.text.primary,
-    backgroundColor: "antiquewhite",
-    height: '39vh',
-    position: 'relative'
-  }));  
+import { initial_state } from "../constants";
 
 export default function Home() {
-
-    const initial_state = useMemo(() => ({
-        REGISTERS: {
-            RAX: 0,
-            RBX: 0,
-            RCX: 0,
-            RDX: 0,
-
-            AX: 0,
-            BX: 0,
-            CX: 0,
-            DX: 0,
-
-            AH: 0,
-            BH: 0,
-            CH: 0,
-            DH: 0,
-
-            AL: 0,
-            BL: 0,
-            CL: 0,
-            DL: 0,
-
-            RSI: 0,
-            RDI: 0,
-
-            RBP: 0,
-            RSP: 0,  
-
-            RIP: 0,  
-
-            CS: 0,
-            DS: 0,
-            ES: 0,
-            FS: 0,
-            SS: 0,
-            GS: 0,
-
-            R8: 0,
-            R9: 0,
-            R10: 0,
-            R11: 0,
-            R12: 0,
-            R13: 0,
-            R14: 0,
-            R15: 0,
-
-            EFLAGS: 0           
-        },
-        MEMORY: {
-          data: new Array(1024).fill({ "0": 0 }),
-          size: 0x100400-0x100000,
-          starting_address: 0x100000,
-        },
-        STACK: {
-          size: 0x100400-0x100350,
-          starting_address: 0x100350,
-        },
-        ERROR: "None",
-        LOG: [],
-        STATE: 0
-    }), [])
 
     const [input, setInput] = useState('');
     const [emulator, setEmulator] = useState(initial_state);
@@ -145,12 +32,12 @@ export default function Home() {
 
     return (    
         <Box>
-          <div className="navbar">
+          <NavbarContainer>
             Navbar
           	<button onClick={ () => handleRun(setEmulator,input,emulator) }>Run</button>
             <button onClick={ () => handleAssemble(setEmulator,input,emulator) }>Assemble</button>
             <button onClick={ () => handleStep(setEmulator,input,emulator) }>Step</button>
-					</div>
+					</NavbarContainer>
           <Grid container spacing={2}>
 
             <Grid item xs={4}>
@@ -183,10 +70,11 @@ export default function Home() {
                 </Grid>
                 <Grid item xs={3}>
                   <MappingContainer>
-                    Other
-                    <Mapping emulator_data={emulator}/>
+                    Mapping
+                    <Mapping emulator_data={emulator} setEmulator={setEmulator}/>
                   </MappingContainer>
                   <StackContainer>
+                    Stack
                     <Stack emulator_data={emulator}/>
                   </StackContainer>
                 </Grid>

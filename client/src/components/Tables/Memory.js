@@ -30,7 +30,7 @@ export default function Memory({ emulator_data }) {
     const data = useMemo(
       () => {
         let temp = new Array(0)
-        for(let i=0; i<emulator_data.MEMORY.data.length; i++){
+        for(let i=0; i<emulator_data.MEMORY.size; i++){
           if(i%16 === 0){
             temp.push({
               addr: decToHexString(Object.keys(emulator_data.MEMORY.data[i])[0]),

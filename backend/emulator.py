@@ -127,14 +127,14 @@ class Emulator:
         Initiates the compute unit
         """
         self.LOG = []
-    
+        
         try:
             uc = unicorn.Uc(uc_arch, uc_mode)
             
             # TODO: Map based on .size value
 
             uc.mem_map(self.MEMORY["starting_address"], 2 * 1024 * 1024) # 0x200 000
-
+            
             # Hooks
             uc.hook_add(UC_HOOK_CODE, self.hook_code)
             uc.hook_add(UC_HOOK_BLOCK, self.hook_block)
@@ -160,15 +160,12 @@ class Emulator:
         Updates memory structure
         """
         self.stop()
-        
-        if(options["RAM_starting_address"] != 'None'):   
-            self.MEMORY["starting_address"] = options["RAM_starting_address"]
-        if(options["RAM_size"] != 'None'):
-            self.MEMORY["size"] = options["RAM_size"]
-        if(options["STACK_starting_address"] != 'None'):  
-            self.STACK["starting_address"] = options["STACK_starting_address"]
-        if(options["STACK_size"] != 'None'):  
-            self.STACK["size"] = options["STACK_size"]
+
+        self.MEMORY["size"] = options['options']['MEMORY']['size']
+        self.STACK["starting_address"] = options['options']['STACK']['starting_address']
+        self.STACK["size"] = options['options']['STACK']['size']
+
+        self.uc = self.initiate_uc()
 
         return
 
@@ -426,16 +423,8 @@ class Emulator:
             # Flags
             "EFLAGS": 0
         }
-        self.MEMORY = {
-            "size": 0x100400-0x100000,
-            "starting_address": 0x100000,
-            "data": None
-        }
-        self.STACK = {
-            "size": 0x100400-0x100350,
-            "starting_address": 0x100350,
-            "data": None
-        }
+        self.MEMORY["data"] = None
+        self.STACK["data"] = None
         self.LOG = []
         self.ERROR = "None"
 

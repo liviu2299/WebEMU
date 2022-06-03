@@ -96,5 +96,15 @@ def create_app(test_config=None):
             'state': int(emu.state)
         }
 
+    @app.route("/update", methods=['POST'])
+    def update():
+        data = request.json['data']
+        
+        emu.update_uc_parameters(data)
+
+        return{
+            'mesaj': "Gata"
+        }
+
     return app
 

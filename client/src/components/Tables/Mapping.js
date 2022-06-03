@@ -15,11 +15,12 @@ import RevertIcon from '@mui/icons-material/DoDisturb';
 
 import { decToHexString } from "../../utils/utils"
 
-const CustomTableCell = ({ row, name, onChange }) => {
-  const { isEditMode } = row;
-  return (
-    <TableCell align="left">
-      {isEditMode ? (
+import { initial_state } from '../../constants';
+
+import { handleUpdateParameters } from '../../api/requests';
+
+/*
+      {(isEditMode) ? (
         <Input
           value={row[name]}
           name={name}
@@ -28,16 +29,38 @@ const CustomTableCell = ({ row, name, onChange }) => {
       ) : (
         row[name]
       )}
-    </TableCell>
-  );
+*/
+
+
+const CustomTableCell = ({ row, name, onChange }) => {
+  const { isEditMode } = row;
+  if(!isEditMode || (row.name==="memory" && name==="value")){
+    return (
+      <TableCell align="left">
+        {row[name]}
+      </TableCell>
+    )
+  }
+  if(isEditMode){
+    return (
+      <TableCell align="left">
+        <Input
+          value={row[name]}
+          name={name}
+          onChange={e => onChange(e, row)}
+        />
+      </TableCell>
+    )
+  }
+
 };
 
-export default function Mapping({emulator_data}) {
+export default function Mapping({emulator_data, setEmulator}) {
 
   const [rows, setRows] = useState([
     {
-      id: ".text",
-      name: ".text",
+      id: "memory",
+      name: "memory",
       value: decToHexString(emulator_data.MEMORY.starting_address),
       value2: decToHexString(emulator_data.MEMORY.starting_address + emulator_data.MEMORY.size),
       isEditMode: false
@@ -56,8 +79,8 @@ export default function Mapping({emulator_data}) {
   useEffect(() => {
     setRows([
       {
-        id: ".text",
-        name: ".text",
+        id: "memory",
+        name: "memory",
         value: decToHexString(emulator_data.MEMORY.starting_address),
         value2: decToHexString(emulator_data.MEMORY.starting_address + emulator_data.MEMORY.size),
         isEditMode: false
@@ -114,7 +137,36 @@ export default function Mapping({emulator_data}) {
       });
     });
 
-    // TODO: Submit changes
+    // TODO: Validation !!!
+
+    // Setting new emulator parameters
+    
+      setEmulator(initial_state)
+      setEmulator( (emulator) => ({
+        ...emulator,
+        MEMORY: {
+          starting_address: emulator.MEMORY.starting_address,
+          size: rows[0].value2-rows[0].value,
+          data: new Array(rows[0].value2-rows[0].value).fill({ "0": 0 }),
+        },
+        STACK: {
+          starting_address: Number(rows[1].value),
+          size: rows[1].value2-rows[1].value,
+        }
+      }))
+    
+    // Updating server-side emulator parameters
+    
+    handleUpdateParameters({options:{
+      MEMORY: {
+        size: rows[0].value2-rows[0].value,
+      },
+      STACK: {
+        starting_address: Number(rows[1].value),
+        size: rows[1].value2-rows[1].value,
+      }
+    }})
+
   }
 
   return (

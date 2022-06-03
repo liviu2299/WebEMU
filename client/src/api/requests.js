@@ -60,3 +60,20 @@ export const handleAssemble = (setEmulator,input,emulator) => {
 
   })();
 } 
+
+export const handleUpdateParameters = (options) => {
+    (async () => {
+        const rawResponse = await fetch("/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ data: options }),
+        });
+  
+        const content = await rawResponse.json();
+  
+        console.log(content.mesaj);
+  
+    })();
+  }
