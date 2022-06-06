@@ -1,4 +1,7 @@
 __pycache__
 /venv
-test
+flask_session
 unicorntest
+direct
+test.py
+unicorntest.py
