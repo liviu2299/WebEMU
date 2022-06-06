@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useMemo} from "react";
 
+import uuid from 'react-uuid'
+
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Grid from '@mui/material/Grid';
@@ -17,7 +19,7 @@ import Log from "../components/Log/Log";
 import Mapping from "../components/Tables/Mapping";
 import Stack from "../components/Tables/Stack";
 
-import { handleRun, handleAssemble, handleStep } from "../api/requests";
+import { handleRun, handleAssemble, handleStep, handleHome } from "../api/requests";
 
 import { initial_state } from "../constants";
 
@@ -25,7 +27,12 @@ export default function Home() {
 
     const [input, setInput] = useState('');
     const [emulator, setEmulator] = useState(initial_state);
-  
+    const [id, setId] = useState(uuid());
+
+    useEffect(() => {
+      handleHome(id)
+    }, [])
+
     useEffect(() => {
       console.log(emulator)
     }, [emulator])
@@ -34,9 +41,9 @@ export default function Home() {
         <Box>
           <NavbarContainer>
             Navbar
-          	<button onClick={ () => handleRun(setEmulator,input,emulator) }>Run</button>
-            <button onClick={ () => handleAssemble(setEmulator,input,emulator) }>Assemble</button>
-            <button onClick={ () => handleStep(setEmulator,input,emulator) }>Step</button>
+          	<button onClick={ () => handleRun(id,setEmulator,input,emulator) }>Run</button>
+            <button onClick={ () => handleAssemble(id,setEmulator,input,emulator) }>Assemble</button>
+            <button onClick={ () => handleStep(id,setEmulator,input,emulator) }>Step</button>
 					</NavbarContainer>
           <Grid container spacing={2}>
 
@@ -71,7 +78,7 @@ export default function Home() {
                 <Grid item xs={3}>
                   <MappingContainer>
                     Mapping
-                    <Mapping emulator_data={emulator} setEmulator={setEmulator}/>
+                    <Mapping client_id ={id} emulator_data={emulator} setEmulator={setEmulator}/>
                   </MappingContainer>
                   <StackContainer>
                     Stack

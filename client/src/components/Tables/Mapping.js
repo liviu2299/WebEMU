@@ -55,7 +55,7 @@ const CustomTableCell = ({ row, name, onChange }) => {
 
 };
 
-export default function Mapping({emulator_data, setEmulator}) {
+export default function Mapping({client_id, emulator_data, setEmulator}) {
 
   const [rows, setRows] = useState([
     {
@@ -157,7 +157,7 @@ export default function Mapping({emulator_data, setEmulator}) {
     
     // Updating server-side emulator parameters
     
-    handleUpdateParameters({options:{
+    handleUpdateParameters(client_id, {options:{
       MEMORY: {
         size: rows[0].value2-rows[0].value,
       },

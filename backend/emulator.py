@@ -91,6 +91,7 @@ class Emulator:
         self.start_addr = self.MEMORY['starting_address']
         self.step_index = 0
         self.stop_now = False
+        self.end_addr = 0
 
         self.LOG = []
         self.uc = self.initiate_uc()
@@ -335,7 +336,7 @@ class Emulator:
 
         return True
 
-    def step2(self):
+    def step(self):
         self.state = State.STEP
         self.stop_now = False
 
@@ -365,7 +366,7 @@ class Emulator:
         self.uc.emu_stop()
 
         return
-    
+                
     def reset(self):
         """
         Resets emulator class values
