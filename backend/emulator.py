@@ -96,6 +96,7 @@ class Emulator:
         self.LOG = []
         self.uc = self.initiate_uc()
         self.ERROR = "None"
+        self.STEP_INFO = {}
 
         return
     
@@ -449,9 +450,13 @@ class Emulator:
 
         code = self.uc.mem_read(address, size)
         instruction = self.dissasemble_instruction(code, address)
-        self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address, size))
+        self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address,size))
 
         if self.state == State.STEP:
+            self.STEP_INFO = {
+                "address": hex(address),
+                "size": hex(size)
+            }
             self.stop_now = True
 
         return

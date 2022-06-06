@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useTable, useBlockLayout } from 'react-table'
 import { FixedSizeList } from 'react-window'
 
 import styled from 'styled-components'
 
-import { decToHex, decToHexString, decToASCII } from "../../utils/utils"
+import { decToHex, decToHexString, decToASCII, isEmpty, check } from "../../utils/utils"
 
 const Styles = styled.div`
 .table {
@@ -17,15 +17,15 @@ const Styles = styled.div`
       border-right: 1px solid black;
     }
     .td:nth-child(17){
-      border-right: 1px solid black;;
+      border-right: 1px solid black;
     }
     text-align: center;
-
   }
-}
-`
+}`
 
 export default function Memory({ emulator_data }) {
+
+    const [stepInstruction, setStepInstruction] = useState({});
 
     const data = useMemo(
       () => {
@@ -185,7 +185,31 @@ export default function Memory({ emulator_data }) {
         rows,
         prepareRow,
     } = useTable({ columns, data }, useBlockLayout)
-   
+
+    useEffect(() => {
+
+      if(!isEmpty(emulator_data.STEP_INFO)){
+        const addr = emulator_data.STEP_INFO["address"]
+        const size = emulator_data.STEP_INFO["size"]
+        console.log(addr, size)
+
+        let temp = []
+        const start = addr - 0x100000
+        const end = start + Number(size)
+
+        for(let i=0; i<end-start; i++){
+          const pos = start + i
+          const row = Math.trunc(pos/16)
+          const col = pos%16 + 1
+          temp.push({row:row, col:col})
+        }
+
+        setStepInstruction(temp)
+
+      }
+      else setStepInstruction({})
+
+    },[emulator_data.STEP_INFO])
 
     const RenderRow = React.useCallback(
         ({ index, style }) => {
@@ -198,9 +222,16 @@ export default function Memory({ emulator_data }) {
               })}
               className="tr"
             >
-              {row.cells.map(cell => {
+              {row.cells.map((cell,index) => {
                 return (
-                  <div {...cell.getCellProps()} className="td">
+                  <div stepInstruction={stepInstruction} {...cell.getCellProps(
+                    {
+                      className: cell.column.className,
+                      style: {
+                        backgroundColor: check(cell.row.index,index,stepInstruction) ? "cyan" : null
+                      }
+                    }
+                    )} className="td">
                     {cell.render('Cell')}
                   </div>
                 )
@@ -208,7 +239,7 @@ export default function Memory({ emulator_data }) {
             </div>
           )
         },
-        [prepareRow, rows]
+        [prepareRow, rows, stepInstruction]
     )
 
     return (

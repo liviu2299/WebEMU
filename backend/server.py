@@ -74,7 +74,8 @@ def create_app(test_config=None):
                     "stack": emu.STACK["data"],
                     "error": emu.ERROR,
                     'log': emu.LOG,
-                    'state': int(emu.state)
+                    'state': int(emu.state),
+                    'step_info': emu.STEP_INFO
                 }   
             else: 
                 return{
@@ -91,6 +92,8 @@ def create_app(test_config=None):
         data = request.json['data']
         code = data.splitlines()
         emu = Emulator()
+
+        print(code)
 
         # GET CACHE ( TODO: cleanup with functions )
         old_context = session[id]
@@ -133,7 +136,8 @@ def create_app(test_config=None):
                     "stack": emu.STACK["data"],
                     "error": emu.ERROR,
                     'log': emu.LOG,
-                    'state': int(emu.state)
+                    'state': int(emu.state),
+                    'step_info': emu.STEP_INFO
                 }   
             else: 
                 return{
@@ -207,7 +211,8 @@ def create_app(test_config=None):
                 "stack": emu.STACK["data"],
                 "error": emu.ERROR,
                 'log': emu.LOG,
-                'state': int(emu.state)
+                'state': int(emu.state),
+                'step_info': emu.STEP_INFO
             }   
         else: 
             return{

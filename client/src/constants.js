@@ -55,7 +55,12 @@ export const initial_state = {
             size: 0x100400-0x100350,
             starting_address: 0x100350,
           },
+          DATA: {
+            size: 0x100350-0x100250,
+            starting_address: 0x100250,
+          },
           ERROR: "None",
           LOG: [],
-          STATE: 0
+          STATE: 0,
+          STEP_INFO: {}
 }
