@@ -62,5 +62,6 @@ export const initial_state = {
           ERROR: "None",
           LOG: [],
           STATE: 0,
-          STEP_INFO: {}
+          STEP_INFO: {},
+          EDITOR_MAPPING: {}
 }

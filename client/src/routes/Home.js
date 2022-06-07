@@ -49,7 +49,7 @@ export default function Home() {
 
             <Grid item xs={4}>
               <EditorContainer>
-								<Code value={input} onChange={setInput}/>
+								<Code value={input} onChange={setInput} emulator_data={emulator}/>
               </EditorContainer>  
             </Grid>
 

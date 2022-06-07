@@ -191,7 +191,6 @@ export default function Memory({ emulator_data }) {
       if(!isEmpty(emulator_data.STEP_INFO)){
         const addr = emulator_data.STEP_INFO["address"]
         const size = emulator_data.STEP_INFO["size"]
-        console.log(addr, size)
 
         let temp = []
         const start = addr - 0x100000

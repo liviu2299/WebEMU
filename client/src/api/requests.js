@@ -12,7 +12,7 @@ export const handleRun = (id,setEmulator,input,emulator) => {
       const content = await rawResponse.json();
 
       if(content.error === "None")    
-          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info})
+          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
       else
           setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 
@@ -33,7 +33,7 @@ export const handleStep = (id,setEmulator,input,emulator) => {
     const content = await rawResponse.json();
 
     if(content.error === "None")    
-        setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info})
+        setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
     else
         setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 
@@ -54,7 +54,7 @@ export const handleAssemble = (id,setEmulator,input,emulator) => {
       const content = await rawResponse.json();
 
       if(content.error === "None")   
-          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info})
+          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
       else
           setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
 

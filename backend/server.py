@@ -1,3 +1,4 @@
+from dis import disassemble
 from flask import Flask, request, session
 from flask_session import Session
 from emulator import Emulator
@@ -41,7 +42,8 @@ def create_app(test_config=None):
             False,
             0,
             [],
-            None).__dict__
+            None,
+            {}).__dict__
 
         return{
             "message": ('You logged with id: %s' %id) 
@@ -75,7 +77,8 @@ def create_app(test_config=None):
                     "error": emu.ERROR,
                     'log': emu.LOG,
                     'state': int(emu.state),
-                    'step_info': emu.STEP_INFO
+                    'step_info': emu.STEP_INFO,
+                    'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
@@ -125,7 +128,8 @@ def create_app(test_config=None):
             session[id]["stop_now"],
             emu.end_addr,
             emu.LOG,
-            session[id]["ERROR"]
+            session[id]["ERROR"],
+            emu.editor_mapping
         ).__dict__
 
         try:
@@ -137,7 +141,8 @@ def create_app(test_config=None):
                     "error": emu.ERROR,
                     'log': emu.LOG,
                     'state': int(emu.state),
-                    'step_info': emu.STEP_INFO
+                    'step_info': emu.STEP_INFO,
+                    'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
@@ -172,7 +177,8 @@ def create_app(test_config=None):
         emu.stop_now = old_context["stop_now"]
         emu.end_addr = old_context["end_addr"]
         emu.LOG = old_context["LOG"]
-        
+        emu.editor_mapping = old_context["editor_mapping"]
+
         if old_context["context"] is 0:
             emu.uc = emu.initiate_uc()
 
@@ -201,7 +207,8 @@ def create_app(test_config=None):
             emu.stop_now,
             emu.end_addr,
             emu.LOG,
-            emu.ERROR
+            emu.ERROR,
+            emu.editor_mapping
         ).__dict__
 
         if emu.ERROR == "None":
@@ -212,7 +219,8 @@ def create_app(test_config=None):
                 "error": emu.ERROR,
                 'log': emu.LOG,
                 'state': int(emu.state),
-                'step_info': emu.STEP_INFO
+                'step_info': emu.STEP_INFO,
+                'editor_mapping': emu.editor_mapping
             }   
         else: 
             return{
@@ -246,7 +254,8 @@ def create_app(test_config=None):
             session[id]["stop_now"],
             session[id]["end_addr"],
             session[id]["LOG"],
-            session[id]["ERROR"]
+            session[id]["ERROR"],
+            session[id]["editor_mapping"]
         ).__dict__
 
         return{

@@ -3,6 +3,7 @@ from keystone import *
 from capstone import *
 from enum import IntEnum
 from unicorn.x86_const import *
+from utils import *
 
 # Constants
 uc_arch = UC_ARCH_X86
@@ -97,6 +98,7 @@ class Emulator:
         self.uc = self.initiate_uc()
         self.ERROR = "None"
         self.STEP_INFO = {}
+        self.editor_mapping = {}
 
         return
     
@@ -258,7 +260,7 @@ class Emulator:
         
         return encoding
 
-    def dissasemble_instruction(self, code, addr):
+    def disassemble_instruction(self, code, addr):
         """
         Return dissasembled string instruction
         """
@@ -274,6 +276,20 @@ class Emulator:
         
         for i in instr:
             return i
+
+    def disassemble(self, assembled_code):
+        """
+        Return dissasembled instructions
+        """
+        md = Cs(CS_ARCH_X86, CS_MODE_64)
+        disassembled = []
+        for (address, size, mnemonic, op_str) in md.disasm_lite(bytes(assembled_code), self.MEMORY["starting_address"]):
+            disassembled.append({
+                "addr": address,
+                "instr": mnemonic
+            })
+
+        return disassembled   
 
     def map_encoding(self, encoding: list):
         """
@@ -307,6 +323,10 @@ class Emulator:
             self.map_encoding(encoding)
         else:
             return False
+
+        # Dissasembling for cmp
+        disassemble = self.disassemble(encoding)
+        self.editor_mapping = line_addr_mapping(code,disassemble)
         
         self.state = State.IDLE
 
@@ -449,7 +469,7 @@ class Emulator:
             return
 
         code = self.uc.mem_read(address, size)
-        instruction = self.dissasemble_instruction(code, address)
+        instruction = self.disassemble_instruction(code, address)
         self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address,size))
 
         if self.state == State.STEP:

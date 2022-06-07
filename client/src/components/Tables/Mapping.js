@@ -44,8 +44,6 @@ const CustomTableCell = ({ row, name, onChange, Validation }) => {
   }
 };
 
-
-
 export default function Mapping({client_id, emulator_data, setEmulator}) {
 
   const [rows, setRows] = useState([
