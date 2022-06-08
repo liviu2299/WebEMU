@@ -90,15 +90,38 @@ class Emulator:
             "data": None
         }
         self.start_addr = self.MEMORY['starting_address']
-        self.step_index = 0
         self.stop_now = False
         self.end_addr = 0
-
-        self.LOG = []
-        self.uc = self.initiate_uc()
-        self.ERROR = "None"
         self.STEP_INFO = {}
         self.editor_mapping = {}
+
+        self.LOG = []
+        self.ERROR = "None"
+
+        self.uc = self.initiate_uc()
+
+        return
+
+    def update(self, MEMORY = None, STACK = None, start_addr = None, stop_now = None, end_addr = None, LOG = None, editor_mapping = None):
+        """
+        Updates emulator parameters
+        """
+        if MEMORY is not None:
+            self.MEMORY["starting_address"] = MEMORY["starting_address"]
+            self.MEMORY["size"] = MEMORY["size"]
+        if STACK is not None:
+            self.STACK["starting_address"] = STACK["starting_address"]
+            self.STACK["size"] = STACK["size"]
+        if start_addr is not None:
+            self.start_addr = start_addr      
+        if stop_now is not None:
+            self.stop_now = stop_now
+        if end_addr is not None:
+            self.end_addr = end_addr
+        if LOG is not None:
+            self.LOG = LOG     
+        if editor_mapping is not None:
+            self.editor_mapping = editor_mapping  
 
         return
     
@@ -129,13 +152,9 @@ class Emulator:
     def initiate_uc(self):
         """
         Initiates the compute unit
-        """
-        self.LOG = []
-        
+        """  
         try:
             uc = unicorn.Uc(uc_arch, uc_mode)
-            
-            # TODO: Map based on .size value
 
             uc.mem_map(self.MEMORY["starting_address"], 2 * 1024 * 1024) # 0x200 000
             
@@ -149,8 +168,6 @@ class Emulator:
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
 
             self.start_addr = self.MEMORY['starting_address']
-
-            self.initial_context = uc.context_save()
 
         except UcError as e:
             print("ERROR: %s" % e)
@@ -176,9 +193,7 @@ class Emulator:
     def get_regs(self):
         """
         Populates the Emulator Registers
-        """
-        # TODO: Check the state of the emulator (Error: Cannot get reg_value before the emulation started)
-        
+        """       
         for i in self.REGISTERS.keys():
             reg_value = self.get_reg_value(i)
             self.REGISTERS[i] = reg_value
@@ -201,7 +216,6 @@ class Emulator:
         mem_list = list(mem)
         stack_list = list(stack)
 
-        # self.MEMORY["data"] = [Memory(hex(self.MEMORY["starting_address"] + i),mem_list[i]) for i in range(50)]
         self.MEMORY["data"] = [{(hex(self.MEMORY["starting_address"] + i)): mem_list[i]} for i in range(self.MEMORY["size"])]
         self.STACK["data"] = [{(hex(self.STACK["starting_address"] + i)): stack_list[i]} for i in range(self.STACK["size"])]
 
@@ -214,9 +228,9 @@ class Emulator:
         if self.ERROR == "None":
             self.get_regs()
             self.get_memory()
-            return False
+            return True
 
-        return True
+        return False
 
     def assemble(self, code: list):
         """
@@ -281,13 +295,20 @@ class Emulator:
         """
         Return dissasembled instructions
         """
-        md = Cs(CS_ARCH_X86, CS_MODE_64)
-        disassembled = []
-        for (address, size, mnemonic, op_str) in md.disasm_lite(bytes(assembled_code), self.MEMORY["starting_address"]):
-            disassembled.append({
-                "addr": address,
-                "instr": mnemonic
-            })
+        try:
+            cs = Cs(CS_ARCH_X86, CS_MODE_64)
+            disassembled = []
+            for (address, size, mnemonic, op_str) in cs.disasm_lite(bytes(assembled_code), self.MEMORY["starting_address"]):
+                disassembled.append({
+                    "addr": address,
+                    "instr": mnemonic
+                })
+
+        except CsError as e:
+            print("ERROR: %s" % e)
+            self.ERROR = str(e)
+            self.logger("DISSASEMBLER ERROR: %s" % e)
+            return False
 
         return disassembled   
 
@@ -295,7 +316,6 @@ class Emulator:
         """
         Map the encoded instructions in memory
         """
-
         if not encoding:
             print("No encoding to map")
             return False
@@ -380,82 +400,12 @@ class Emulator:
         """
         Stops the emulation
         """
-        self.uc.context_restore(self.initial_context)
         self.state = State.NOT_RUNNING
 
-        self.reset()
         self.uc.emu_stop()
 
         return
-                
-    def reset(self):
-        """
-        Resets emulator class values
-        """
-        self.state = State.IDLE
-        self.REGISTERS = {
-            # General
-            "RAX": 0,
-            "RBX": 0,
-            "RCX": 0,
-            "RDX": 0,
 
-            "AX": 0,
-            "BX": 0,
-            "CX": 0,
-            "DX": 0,
-
-            "AH": 0,
-            "BH": 0,
-            "CH": 0,
-            "DH": 0,
-
-            "AL": 0,
-            "BL": 0,
-            "CL": 0,
-            "DL": 0,
-
-            # Index & Pointers
-            "RSI": 0,
-            "RDI": 0,
-
-            "RBP": 0,
-            "RSP": 0,   # sp
-
-            "RIP": 0,   # pc
-
-            # PGR Registers
-            "CS": 0,
-            "DS": 0,
-            "ES": 0,
-            "FS": 0,
-            "SS": 0,
-            "GS": 0,
-
-            # 64 GR
-            "R8": 0,
-            "R9": 0,
-            "R10": 0,
-            "R11": 0,
-            "R12": 0,
-            "R13": 0,
-            "R14": 0,
-            "R15": 0,
-
-            # Flags
-            "EFLAGS": 0
-        }
-        self.MEMORY["data"] = None
-        self.STACK["data"] = None
-        self.LOG = []
-        self.ERROR = "None"
-
-        self.start_addr = self.MEMORY["starting_address"]
-        self.step_index = 0
-        self.stop_now = False
-
-        return
-    
     # Debugging / Hooks
 
     def hook_code(self, uc, address, size, user_data):
@@ -485,10 +435,12 @@ class Emulator:
         """
         Hook for every block
         """
-        if(self.state == State.STEP):
+        msg = '>>> Entering block at 0x%x' % (address)
+        if self.LOG[-1] == msg:
             return
 
-        self.logger('>>> Entering block at 0x%x' % (address))
+        self.logger(msg)
+
         return
 
     def hook_mem_access(self, uc, access, address, size, value, user_data):
