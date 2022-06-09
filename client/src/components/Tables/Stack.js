@@ -4,6 +4,8 @@ import { FixedSizeList } from 'react-window'
 
 import { decToHex, decToHexString, decToASCII } from "../../utils/utils"
 
+import { CustomScrollbarsVirtualList } from '../Scrollbar/Scrollbar';
+
 import styled from 'styled-components'
 
 const Styles = styled.div`
@@ -12,8 +14,10 @@ const Styles = styled.div`
     .td:first-child{
       text-align: left;
     }
-    text-align: center;
-
+    .td:nth-child(2){
+      text-align: right;
+    }
+    padding-right: 1rem
   }
 }
 `
@@ -84,10 +88,11 @@ export default function Stack({ emulator_data }) {
 
         <div {...getTableBodyProps()}>
           <FixedSizeList
-            height={205}
+            height={195}
             itemCount={rows.length}
             itemSize={20}
             width="100%"
+            outerElementType={CustomScrollbarsVirtualList}
           >
             {RenderRow}
           </FixedSizeList>

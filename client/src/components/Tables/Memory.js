@@ -1,6 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect, useCallback } from 'react'
 import { useTable, useBlockLayout } from 'react-table'
 import { FixedSizeList } from 'react-window'
+
+import { CustomScrollbarsVirtualList } from '../Scrollbar/Scrollbar';
 
 import styled from 'styled-components'
 
@@ -14,10 +16,10 @@ const Styles = styled.div`
       width: 5rem;
       min-width: 5rem;
       max-width: 5rem;
-      border-right: 1px solid black;
+      border-right: 1px solid white;
     }
     .td:nth-child(17){
-      border-right: 1px solid black;
+      border-right: 1px solid white;
     }
     text-align: center;
   }
@@ -227,7 +229,7 @@ export default function Memory({ emulator_data }) {
                     {
                       className: cell.column.className,
                       style: {
-                        backgroundColor: check(cell.row.index,index,stepInstruction) ? "cyan" : null
+                        backgroundColor: check(cell.row.index,index,stepInstruction) ? "#727272" : null
                       }
                     }
                     )} className="td">
@@ -247,10 +249,11 @@ export default function Memory({ emulator_data }) {
 
         <div {...getTableBodyProps()}>
           <FixedSizeList
-            height={300}
+            height={280}
             itemCount={rows.length}
             itemSize={20}
             width="100%"
+            outerElementType={CustomScrollbarsVirtualList}
           >
             {RenderRow}
           </FixedSizeList>

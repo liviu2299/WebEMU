@@ -62,7 +62,6 @@ def create_app(test_config=None):
         emu.run(code)
         emu.update_data()
 
-        # TODO: RUN -> STEP
         # UPDATE CACHE
         mem = emu.uc.mem_read(emu.MEMORY["starting_address"], emu.MEMORY["size"])
         encrypted_mem = bytes(mem)
@@ -76,10 +75,10 @@ def create_app(test_config=None):
             },
             old_context["STACK"],
             old_context["MEMORY"]["starting_address"],
-            old_context["stop_now"],
+            False,
             emu.end_addr,
-            [],
-            None,
+            [emu.LOG[0]],
+            emu.ERROR,
             emu.editor_mapping
         ).__dict__
 
@@ -135,10 +134,10 @@ def create_app(test_config=None):
             },
             emu.STACK,
             emu.MEMORY["starting_address"],
-            session[id]["stop_now"],
+            False,
             emu.end_addr,
             emu.LOG,
-            session[id]["ERROR"],
+            emu.ERROR,
             emu.editor_mapping
         ).__dict__
 

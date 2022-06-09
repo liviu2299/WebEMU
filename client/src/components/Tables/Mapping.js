@@ -29,7 +29,7 @@ const CustomTableCell = ({ row, name, onChange, Validation }) => {
   }
   if(isEditMode){
     return (
-      <TableCell align="left">
+      <TableCell align="right">
         <TextField     
           error={Validation(row,name)}
           id="outlined-error-helper-text"
@@ -38,6 +38,7 @@ const CustomTableCell = ({ row, name, onChange, Validation }) => {
           onChange={e => onChange(e, row)}
           helperText={Validation(row,name) ? "Incorrect entry." : ""}
           variant="standard"
+          inputProps={{style: {fontSize: 15}}}
         />
       </TableCell>
     )
@@ -200,13 +201,10 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
 
   const onSubmit = id => {
 
-    // If !Validation onRevert() + return
-    console.log(error)
     if(error) {
       onRevert()
       return;
     }
-    console.log("saved")
 
     setRows(state => {
       return rows.map(row => {
@@ -259,6 +257,12 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
     <div>
       <TableContainer component={Paper}>
         <Table size="small" aria-label="a dense table" padding="none">
+          <colgroup>
+            <col width="30%" />
+            <col width="30%" />
+            <col width="30%" />
+            <col width="10%" />
+          </colgroup>
           <TableBody>
             {rows.map((row) => (
               <TableRow 
@@ -275,12 +279,16 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
                   <div>
                     <IconButton
                       aria-label="done"
+                      color="success"
+                      size="small"
                       onClick={() => onSubmit(row.id)}
                     >
                       <DoneIcon />
                     </IconButton>
                     <IconButton
                       aria-label="revert"
+                      color="warning"
+                      size="small"
                       onClick={() => onRevert()}
                     >
                       <RevertIcon />
@@ -289,6 +297,8 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
                   ) : (
                   <IconButton
                     aria-label="delete"
+                    color="secondary"
+                    size="small"
                     onClick={() => onToggleEditMode(row.id)}
                   >
                     <EditIcon />

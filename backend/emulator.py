@@ -252,6 +252,10 @@ class Emulator:
             self.logger("ASSEMBLER ERROR: %s" % e)
             return (False, 0)
 
+        # Dissasembling for cmp
+        disassemble = self.disassemble(encoding)
+        self.editor_mapping = line_addr_mapping(code,disassemble)
+
         self.logger(">>> Code Assembled Successfully")
 
         return (encoding, count)
@@ -343,10 +347,6 @@ class Emulator:
             self.map_encoding(encoding)
         else:
             return False
-
-        # Dissasembling for cmp
-        disassemble = self.disassemble(encoding)
-        self.editor_mapping = line_addr_mapping(code,disassemble)
         
         self.state = State.IDLE
 
