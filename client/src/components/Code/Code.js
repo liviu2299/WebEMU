@@ -33,6 +33,10 @@ export default function Code(props) {
 		editor.doc.addLineClass(data.line, 'background', 'current-line')
 	}
 
+	function clearHighlights(editor){
+		for(let i=0; i<editor.lineCount(); i++) editor.doc.removeLineClass(i, 'background', 'current-line')
+	}
+
 	useEffect(() => {
 		if(!isEmpty(emulator_data.STEP_INFO)){
 			const addr = Number(emulator_data.STEP_INFO["address"])
@@ -46,6 +50,14 @@ export default function Code(props) {
 		if(isEmpty(emulator_data.STEP_INFO)) editorRef.current.editor.doc.getAllMarks().forEach(marker => marker.clear())
 	}, [emulator_data.STEP_INFO])
 
+	useEffect(() => {
+		if(emulator_data.ERROR_LINE !== "None"){
+			for(let i=0; i<editorRef.current.editor.lineCount(); i++) editorRef.current.editor.doc.removeLineClass(i, 'gutter', 'error')
+			editorRef.current.editor.doc.addLineClass(emulator_data.ERROR_LINE, 'gutter', 'error')
+		}
+		if(emulator_data.ERROR_LINE === "None") for(let i=0; i<editorRef.current.editor.lineCount(); i++) editorRef.current.editor.doc.removeLineClass(i, 'gutter', 'error')
+	}, [emulator_data.ERROR_LINE])
+
   return (
 		<CodeMirror ref={editorRef}
 			onBeforeChange={handleChange}
@@ -57,6 +69,7 @@ export default function Code(props) {
 				lineNumbers: true,
 			}}
 			editorDidMount={editor => {getEditor(editor)}}
+			onBlur={editor => clearHighlights(editor)}
 			onCursor={(editor, data) => onCursorChange(editor, data)}
 		/>
   )

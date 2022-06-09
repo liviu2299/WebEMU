@@ -12,9 +12,9 @@ export const handleRun = (id,setEmulator,input,emulator) => {
       const content = await rawResponse.json();
 
       if(content.error === "None")    
-          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
+          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping, ERROR_LINE: content.error_line})
       else
-          setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
+          setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state, ERROR_LINE: content.error_line})
 
   })();
 }
@@ -33,9 +33,9 @@ export const handleStep = (id,setEmulator,input,emulator) => {
     const content = await rawResponse.json();
 
     if(content.error === "None")    
-        setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
+        setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping, ERROR_LINE: content.error_line})
     else
-        setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
+        setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state, ERROR_LINE: content.error_line})
 
 })();
 }
@@ -54,9 +54,9 @@ export const handleAssemble = (id,setEmulator,input,emulator) => {
       const content = await rawResponse.json();
 
       if(content.error === "None")   
-          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping})
+          setEmulator({...emulator, MEMORY: {...emulator.MEMORY, data:content.memory}, REGISTERS: content.registers, ERROR: content.error, LOG: content.log, STATE: content.state, STEP_INFO: content.step_info, EDITOR_MAPPING: content.editor_mapping, ERROR_LINE: content.error_line})
       else
-          setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state})
+          setEmulator({...emulator, ERROR: content.error, LOG: content.log, STATE: content.state, ERROR_LINE: content.error_line})
 
   })();
 } 

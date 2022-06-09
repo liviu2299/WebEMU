@@ -92,11 +92,13 @@ def create_app(test_config=None):
                     'log': emu.LOG,
                     'state': int(emu.state),
                     'step_info': emu.STEP_INFO,
+                    "error_line": emu.error_line,
                     'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
+                "error_line": emu.error_line,
                 'log': emu.LOG,
                 'state': int(emu.state)
             }
@@ -151,11 +153,13 @@ def create_app(test_config=None):
                     'log': emu.LOG,
                     'state': int(emu.state),
                     'step_info': emu.STEP_INFO,
+                    "error_line": emu.error_line,
                     'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
+                "error_line": emu.error_line,
                 'log': emu.LOG,
                 'state': int(emu.state)
             }
@@ -222,12 +226,14 @@ def create_app(test_config=None):
                     'log': emu.LOG,
                     'state': int(emu.state),
                     'step_info': emu.STEP_INFO,
+                    "error_line": emu.error_line,
                     'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
                 'log': emu.LOG,
+                "error_line": emu.error_line,
                 'state': int(emu.state)
             }
         finally:

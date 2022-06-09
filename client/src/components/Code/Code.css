@@ -12,3 +12,7 @@
 .current-line{
   background-color: #727272;
 }
+
+.error{
+  background-color: red;
+}

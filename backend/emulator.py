@@ -97,6 +97,7 @@ class Emulator:
 
         self.LOG = []
         self.ERROR = "None"
+        self.error_line = "None"
 
         self.uc = self.initiate_uc()
 
@@ -239,7 +240,7 @@ class Emulator:
         formated_code = ";".join(code)
         binary_code = formated_code.encode("utf-8")
         
-        # TODO: Further checks on code list
+        # TODO: Further checks on code list ( Parsing for comments )
 
         try:
             ks = Ks(ks_arch, ks_mode)
@@ -247,9 +248,19 @@ class Emulator:
             self.end_addr = self.MEMORY["starting_address"] + len(encoding)
 
         except KsError as e:
-            print("ERROR: %s" % e)
             self.ERROR = str(e)
             self.logger("ASSEMBLER ERROR: %s" % e)
+
+            # Iterative assembling till failure for error-line detection
+            for i in range(len(code)):
+                formated_code = ";".join(code[0:i+1])
+                binary_code = formated_code.encode("utf-8")
+                try:
+                    partial_assembly = ks.asm(binary_code)
+                except KsError as e:
+                    self.error_line = i
+                    break
+
             return (False, 0)
 
         # Dissasembling for cmp
