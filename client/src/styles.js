@@ -1,6 +1,27 @@
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import { createTheme } from '@mui/material/styles';
+
+export const theme = createTheme({
+  palette: {
+    type: 'dark',
+    primary: {
+      main: '#263238',
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: '#4B75B7',
+    },
+    background: {
+      default: '#303030',
+      paper: '#263238',
+    },
+      text: {
+    primary: '#F3F3F3',
+  },
+  },
+});
 
 export const EditorContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -8,7 +29,7 @@ export const EditorContainer = styled(Paper)(({ theme }) => ({
   height: '90vh',
   position: 'relative',
   border: 'solid 1px',
-  borderColor: '#F3F3F3'
+  borderColor: '#F3F3F3',
 }));
 export const RegsContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -17,7 +38,7 @@ export const RegsContainer = styled(Paper)(({ theme }) => ({
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
-  padding: '0.5rem'
+  padding: '0.5rem',
 }));
 export const FlagsContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -26,7 +47,7 @@ export const FlagsContainer = styled(Paper)(({ theme }) => ({
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
-  padding: '0.5rem'
+  padding: '0.5rem',
 }));
 export const LogContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,

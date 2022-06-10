@@ -2,9 +2,9 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import Tooltip from '@mui/material/Tooltip';
 
 import { handleRun, handleAssemble, handleStep, handleHome } from "../../api/requests";
 
@@ -12,51 +12,76 @@ const ResponsiveAppBar = ({emulator, setEmulator, input}) => {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xxl">
+      <Box style={{paddingLeft: '10px'}}>
         <Toolbar disableGutters
         variant="regular"
         style={{height: "3rem", minHeight: "3rem", maxHeight: "3rem"}}
         >
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 400,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Home
-          </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
-            <Button 
-              sx={{ my: 2, color: 'white', display: 'block' }}
-              onClick={ () => handleRun(sessionStorage.getItem('id'),setEmulator,input,emulator) }
-            >
-            Run
-            </Button>
-            <Button 
-              sx={{ my: 2, color: 'white', display: 'block' }}
-              onClick={ () => handleAssemble(sessionStorage.getItem('id'),setEmulator,input,emulator) }
-            >
-            Assemble
-            </Button>
-            <Button 
-              sx={{ my: 2, color: 'white', display: 'block' }}
-              onClick={ () => handleStep(sessionStorage.getItem('id'),setEmulator,input,emulator) }
-            >
-            Step
-            </Button>            
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex'}}}>
+            <Box sx={{padding: '0.3rem'}}>
+              <Button 
+                variant= 'contained' 
+                color='success'
+                size="small"
+                sx={{ my: 4,
+                  minWidth: "30px",
+                  maxWidth: "50px",
+                  minHeight: "25px",
+                  maxHeight: "25px",
+                  boxShadow: 3,
+                  color: 'white'
+                }}
+                onClick={ () => handleRun(sessionStorage.getItem('id'),setEmulator,input,emulator) }
+              >
+              Run
+              </Button>
+            </Box>
+
+            <Box sx={{padding: '0.3rem'}}>
+              <Button 
+                variant= 'contained' 
+                color='secondary'
+                size="small"
+                sx={{ my: 4,
+                  minWidth: "90px",
+                  maxWidth: "90px",
+                  minHeight: "25px",
+                  maxHeight: "25px",
+                  boxShadow: 3,
+                }}
+                onClick={ () => handleAssemble(sessionStorage.getItem('id'),setEmulator,input,emulator) }
+              >
+              Assemble
+              </Button>
+            </Box>
+
+            <Box sx={{padding: '0.3rem'}}>          
+              <Button 
+                variant= 'contained' 
+                color='secondary'
+                size="small"
+                sx={{ my: 4,
+                  minWidth: "30px",
+                  maxWidth: "50px",
+                  minHeight: "25px",
+                  maxHeight: "25px",
+                  boxShadow: 3,
+                }}
+                onClick={ () => handleStep(sessionStorage.getItem('id'),setEmulator,input,emulator) }
+              >
+              Step
+              </Button>   
+            </Box>  
+          
+          </Box>
+          <Box sx={{marginRight: '0.5rem', marginTop: '0.5rem'}}>
+            <Tooltip>
+              <HelpRoundedIcon />
+            </Tooltip>
           </Box>
         </Toolbar>
-      </Container>
+      </Box>
     </AppBar>
   );
 };

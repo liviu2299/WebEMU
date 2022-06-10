@@ -2,6 +2,7 @@ from flask import Flask, request, session
 from flask_session import Session
 from emulator import Emulator
 from cached_model import Time_Machine
+from utils import *
 import jsonpickle
 
 def create_app(test_config=None):
@@ -39,7 +40,8 @@ def create_app(test_config=None):
             0,
             [],
             None,
-            {}).__dict__
+            {},
+            "None").__dict__
 
         return{
             "message": ('You logged with id: %s' %id) 
@@ -49,7 +51,7 @@ def create_app(test_config=None):
     def compute():
         id = request.json['id']
         data = request.json['data']
-        code = data.splitlines()
+        code = formatNoneType(data.splitlines())
         old_context = session[id]
 
         emu = Emulator()  
@@ -79,7 +81,8 @@ def create_app(test_config=None):
             emu.end_addr,
             [emu.LOG[0]],
             emu.ERROR,
-            emu.editor_mapping
+            emu.editor_mapping,
+            emu.error_line
         ).__dict__
 
         try:
@@ -109,7 +112,7 @@ def create_app(test_config=None):
     def compile():
         id = request.json['id']
         data = request.json['data']
-        code = data.splitlines()
+        code = formatNoneType(data.splitlines())
         old_context = session[id]
 
         emu = Emulator()
@@ -140,7 +143,8 @@ def create_app(test_config=None):
             emu.end_addr,
             emu.LOG,
             emu.ERROR,
-            emu.editor_mapping
+            emu.editor_mapping,
+            emu.error_line
         ).__dict__
 
         try:
@@ -209,7 +213,8 @@ def create_app(test_config=None):
                 emu.end_addr,
                 emu.LOG,
                 emu.ERROR,
-                emu.editor_mapping
+                emu.editor_mapping,
+                old_context["error_line"]
             ).__dict__
         
         else:
@@ -226,14 +231,14 @@ def create_app(test_config=None):
                     'log': emu.LOG,
                     'state': int(emu.state),
                     'step_info': emu.STEP_INFO,
-                    "error_line": emu.error_line,
+                    "error_line": old_context["error_line"],
                     'editor_mapping': emu.editor_mapping
                 }   
             else: 
                 return{
                 "error": emu.ERROR,
                 'log': emu.LOG,
-                "error_line": emu.error_line,
+                "error_line": old_context["error_line"],
                 'state': int(emu.state)
             }
         finally:

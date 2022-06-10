@@ -10,6 +10,8 @@ import 'codemirror/mode/gas/gas'
 import './Code.css'
 import { isEmpty } from '../../utils/utils'
 
+let lastHighlightedLine = -1;
+
 export default function Code(props) {
 	
 	const {
@@ -29,12 +31,15 @@ export default function Code(props) {
 	}
 
 	function onCursorChange(editor, data){
-		for(let i=0; i<editor.lineCount(); i++) editor.doc.removeLineClass(i, 'background', 'current-line')
+		//for(let i=0; i<editor.lineCount(); i++) editor.doc.removeLineClass(i, 'background', 'current-line')
+		if(lastHighlightedLine !== -1) editor.doc.removeLineClass(lastHighlightedLine, 'background', 'current-line')
 		editor.doc.addLineClass(data.line, 'background', 'current-line')
+		lastHighlightedLine = data.line
 	}
 
 	function clearHighlights(editor){
-		for(let i=0; i<editor.lineCount(); i++) editor.doc.removeLineClass(i, 'background', 'current-line')
+		//for(let i=0; i<editor.lineCount(); i++) editor.doc.removeLineClass(i, 'background', 'current-line')
+		if(lastHighlightedLine !== -1) editor.doc.removeLineClass(lastHighlightedLine, 'background', 'current-line')
 	}
 
 	useEffect(() => {
@@ -42,20 +47,24 @@ export default function Code(props) {
 			const addr = Number(emulator_data.STEP_INFO["address"])
 			const line = emulator_data.EDITOR_MAPPING[addr.toString()]
 			
-			for(let i=0; i<editorRef.current.editor.lineCount(); i++) editorRef.current.editor.doc.removeLineClass(i, 'background', 'current-line')
+			if(lastHighlightedLine !== -1) editorRef.current.editor.doc.removeLineClass(lastHighlightedLine, 'background', 'current-line')
 			editorRef.current.editor.doc.addLineClass(line, 'background', 'current-line')
-			//editorRef.current.editor.doc.getAllMarks().forEach(marker => marker.clear())
-			//editorRef.current.editor.markText({line: line, ch: 0}, {line: line, ch: 100}, {className: "styled-background"})
+			lastHighlightedLine = line
+
 		}
-		if(isEmpty(emulator_data.STEP_INFO)) editorRef.current.editor.doc.getAllMarks().forEach(marker => marker.clear())
+		if(isEmpty(emulator_data.STEP_INFO))
+			if(lastHighlightedLine !== -1) 
+				editorRef.current.editor.doc.removeLineClass(lastHighlightedLine, 'background', 'current-line')
 	}, [emulator_data.STEP_INFO])
 
 	useEffect(() => {
 		if(emulator_data.ERROR_LINE !== "None"){
-			for(let i=0; i<editorRef.current.editor.lineCount(); i++) editorRef.current.editor.doc.removeLineClass(i, 'gutter', 'error')
+			if(lastHighlightedLine !== -1) editorRef.current.editor.doc.removeLineClass(lastHighlightedLine, 'background', 'current-line')
 			editorRef.current.editor.doc.addLineClass(emulator_data.ERROR_LINE, 'gutter', 'error')
 		}
-		if(emulator_data.ERROR_LINE === "None") for(let i=0; i<editorRef.current.editor.lineCount(); i++) editorRef.current.editor.doc.removeLineClass(i, 'gutter', 'error')
+		if(emulator_data.ERROR_LINE === "None") 
+			if(lastHighlightedLine !== -1) 
+				editorRef.current.editor.doc.removeLineClass(lastHighlightedLine, 'gutter', 'error')
 	}, [emulator_data.ERROR_LINE])
 
   return (

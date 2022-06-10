@@ -1,6 +1,6 @@
 class Time_Machine:
 
-    def __init__(self,id,context,MEMORY,STACK,start_addr,stop_now,end_addr,LOG,ERROR,editor_mapping):
+    def __init__(self,id,context,MEMORY,STACK,start_addr,stop_now,end_addr,LOG,ERROR,editor_mapping,error_line):
         self.id = id
         self.context = context
         self.MEMORY = MEMORY
@@ -11,3 +11,4 @@ class Time_Machine:
         self.LOG = LOG
         self.ERROR = ERROR
         self.editor_mapping = editor_mapping
+        self.error_line = error_line

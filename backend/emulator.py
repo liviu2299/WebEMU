@@ -237,10 +237,9 @@ class Emulator:
         """
         Assembles input code
         """
+        code = parse_comments(code)
         formated_code = ";".join(code)
         binary_code = formated_code.encode("utf-8")
-        
-        # TODO: Further checks on code list ( Parsing for comments )
 
         try:
             ks = Ks(ks_arch, ks_mode)
@@ -267,7 +266,11 @@ class Emulator:
         disassemble = self.disassemble(encoding)
         self.editor_mapping = line_addr_mapping(code,disassemble)
 
-        self.logger(">>> Code Assembled Successfully")
+        if not encoding:
+            self.ERROR = "No code to ASSEMBLE"
+            self.logger('>>> No code to ASSEMBLE')
+        else:
+            self.logger(">>> Code Assembled Successfully")
 
         return (encoding, count)
     

@@ -2,9 +2,8 @@ import React, {useState, useEffect, useMemo} from "react";
 
 import uuid from 'react-uuid'
 
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import {BoxContainer,NavbarContainer,EditorContainer,RegsContainer,FlagsContainer,LogContainer,MappingContainer,StackContainer,MemoryContainer} from './styles';
+import {BoxContainer,NavbarContainer,EditorContainer,RegsContainer,FlagsContainer,LogContainer,MappingContainer,StackContainer,MemoryContainer} from '../styles';
 
 import Code from "../components/Code/Code"
 import Regs from "../components/Tables/Regs";
@@ -42,7 +41,7 @@ export default function Home() {
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <NavbarContainer>
-              <AppBar emulator={emulator} setEmulator={setEmulator} input={input} />
+                <AppBar emulator={emulator} setEmulator={setEmulator} input={input} />
               </NavbarContainer>
             </Grid>
 
