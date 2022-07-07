@@ -17,6 +17,7 @@ const Styles = styled.div`
       min-width: 5rem;
       max-width: 5rem;
       border-right: 1px solid white;
+      color: #A3A163;
     }
     .td:nth-child(17){
       border-right: 1px solid white;
@@ -35,7 +36,7 @@ export default function Memory({ emulator_data }) {
         for(let i=0; i<emulator_data.MEMORY.size; i++){
           if(i%16 === 0){
             temp.push({
-              addr: decToHexString(Object.keys(emulator_data.MEMORY.data[i])[0]),
+              addr: decToHexString(Object.keys(emulator_data.MEMORY.data[i])[0],6),
               value1: decToHex(Object.values(emulator_data.MEMORY.data[i])[0]),
               value2: decToHex(Object.values(emulator_data.MEMORY.data[i+1])[0]),
               value3: decToHex(Object.values(emulator_data.MEMORY.data[i+2])[0]),
@@ -249,7 +250,7 @@ export default function Memory({ emulator_data }) {
 
         <div {...getTableBodyProps()}>
           <FixedSizeList
-            height={280}
+            height={260}
             itemCount={rows.length}
             itemSize={20}
             width="100%"

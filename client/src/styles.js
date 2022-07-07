@@ -12,15 +12,19 @@ export const theme = createTheme({
     },
     secondary: {
       main: '#4B75B7',
+      contrastText: "#fff",
     },
     background: {
       default: '#303030',
       paper: '#263238',
     },
-      text: {
+    text: {
     primary: '#F3F3F3',
+    },
   },
-  },
+  typography: {
+    fontFamily: 'Roboto Mono',
+  }
 });
 
 export const EditorContainer = styled(Paper)(({ theme }) => ({
@@ -34,7 +38,7 @@ export const EditorContainer = styled(Paper)(({ theme }) => ({
 export const RegsContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   color: theme.palette.text.primary,
-  height: '50vh',
+  height: '52vh',
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
@@ -43,7 +47,7 @@ export const RegsContainer = styled(Paper)(({ theme }) => ({
 export const FlagsContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   color: theme.palette.text.primary,
-  height: '50vh',
+  height: '52vh',
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
@@ -52,11 +56,13 @@ export const FlagsContainer = styled(Paper)(({ theme }) => ({
 export const LogContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   color: theme.palette.text.primary,
-  height: '50vh',
+  height: '52vh',
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
-  padding: '0.5rem'
+  padding: '0.5rem',
+  fontFamily: 'Roboto Mono',
+  fontSize: 13
 }));
 export const MappingContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -69,8 +75,8 @@ export const MappingContainer = styled(Paper)(({ theme }) => ({
 }));
 export const StackContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
-  color: theme.palette.text.primary,
-  height: '30vh',
+  color: "theme.palette.text.primary",
+  height: '32vh',
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
@@ -79,11 +85,12 @@ export const StackContainer = styled(Paper)(({ theme }) => ({
 export const MemoryContainer = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   color: theme.palette.text.primary,
-  height: '39vh',
+  height: '37vh',
   position: 'relative',
   border: 'solid 1px',
   borderColor: '#F3F3F3',
-  padding: '0.5rem'
+  padding: '0.5rem',
+  fontFamily: 'Roboto Mono'
 }));
 export const NavbarContainer = styled(Paper)(({ theme }) => ({
   borderBottom: 'solid 2px',

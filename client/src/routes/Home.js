@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
+import WebFont from 'webfontloader';
 
 import uuid from 'react-uuid'
 
@@ -26,22 +27,35 @@ export default function Home() {
 
     const [input, setInput] = useState('');
     const [emulator, setEmulator] = useState(initial_state);
+    const [stepValid, setStepValid] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
       sessionStorage.setItem("id", uuid())
       handleHome(sessionStorage.getItem('id'))
+
+      WebFont.load({
+        google: {
+          families: ['Roboto Mono']
+        }
+      });
     }, [])
 
     useEffect(() => {
       console.log(emulator)
     }, [emulator])
 
+    useEffect(() => {
+      if(emulator.ERROR !== "None") setStepValid(false)
+      if(emulator.ERROR === "None") setStepValid(true)
+    }, [emulator.ERROR])
+
     return (    
         <BoxContainer>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <NavbarContainer>
-                <AppBar emulator={emulator} setEmulator={setEmulator} input={input} />
+                <AppBar emulator={emulator} setEmulator={setEmulator} input={input} setStepValid={setStepValid} stepValid={stepValid} loading={loading} setLoading={setLoading}/>
               </NavbarContainer>
             </Grid>
 
@@ -69,8 +83,10 @@ export default function Home() {
               		</Grid>
               	<Grid item xs={3}>
                   <LogContainer>
-                    Logs
-                    <Log logs={emulator.LOG}/>
+                    <div style={{borderBottom: '1px solid white', marginBottom: "10px", position: 'sticky', top: '0', }}>
+                      Operation Logs
+                    </div>
+                    <Log logs={emulator.LOG} error={emulator.ERROR}/>
                   </LogContainer>
                 </Grid>
                 <Grid item xs={3}>
@@ -78,7 +94,9 @@ export default function Home() {
                     <Mapping client_id ={sessionStorage.getItem('id')} emulator_data={emulator} setEmulator={setEmulator}/>
                   </MappingContainer>
                   <StackContainer>
-                    Stack
+                    <div style={{borderBottom: '1px solid white', marginBottom: "10px", position: 'sticky', top: '0'}}>
+                      Stack Segment
+                    </div>
                     <Stack emulator_data={emulator}/>
                   </StackContainer>
                 </Grid>

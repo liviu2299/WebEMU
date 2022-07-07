@@ -49,8 +49,8 @@ export default function GRegs({emulator_data}) {
   )
 
   return (
-    <div>
-      <TableContainer component={Paper}>
+    <div style={{padding: "2px", borderBottom: '1px solid white'}}>
+      <TableContainer component={Paper} style={{boxShadow: "none"}}>
         <Table size="small" aria-label="a dense table" padding="none">
           <TableBody>
             {rows.map((row) => (
@@ -58,15 +58,15 @@ export default function GRegs({emulator_data}) {
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.name4}
                 </TableCell>
                 <TableCell align="center">{row.value4}</TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.nameh}
                 </TableCell>
                 <TableCell align="center">{row.valueh}</TableCell>  
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.namel}
                 </TableCell>
                 <TableCell align="center">{row.valuel}</TableCell>  

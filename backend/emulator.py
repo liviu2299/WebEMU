@@ -4,6 +4,7 @@ from capstone import *
 from enum import IntEnum
 from unicorn.x86_const import *
 from utils import *
+from datetime import datetime
 
 # Constants
 uc_arch = UC_ARCH_X86
@@ -133,7 +134,8 @@ class Emulator:
         """
         Updates the log
         """
-        self.LOG.append(msg)
+        now = datetime.now().strftime("%H:%M:%S")
+        self.LOG.append('[' + now + '] ' + msg)
         return
 
     def get_reg_opcode(self, reg: str):
@@ -164,9 +166,16 @@ class Emulator:
             uc.hook_add(UC_HOOK_BLOCK, self.hook_block)
             uc.hook_add(UC_HOOK_MEM_WRITE, self.hook_mem_access)
             uc.hook_add(UC_HOOK_MEM_READ, self.hook_mem_access)
+            uc.hook_add(UC_HOOK_MEM_WRITE_UNMAPPED, self.hook_mem_invalid_write)
+            uc.hook_add(UC_HOOK_MEM_READ_UNMAPPED, self.hook_mem_invalid_read)
 
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RSP, self.STACK["starting_address"] + self.STACK["size"])
             uc.reg_write(unicorn.x86_const.UC_X86_REG_RBP, self.STACK["starting_address"])
+
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_DS, 0x11)
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_ES, 0x19)
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_CS, 0x43)
+            uc.reg_write(unicorn.x86_const.UC_X86_REG_SS, 0x51)
 
             self.start_addr = self.MEMORY['starting_address']
 
@@ -269,9 +278,11 @@ class Emulator:
         if not encoding:
             self.ERROR = "No code to ASSEMBLE"
             self.logger('>>> No code to ASSEMBLE')
+            return (False, 0)
         else:
             self.logger(">>> Code Assembled Successfully")
 
+        print(encoding)
         return (encoding, count)
     
     def assemble_instruction(self, code):
@@ -427,6 +438,11 @@ class Emulator:
         Hook for every instruction
         """
         
+        if self.get_reg_value('RBP') >= self.get_reg_value('RSP'):
+            self.logger('>>> STACK OVERFLOW')
+            self.uc.emu_stop()
+            return
+
         if self.stop_now:
             self.start_addr = self.get_reg_value("RIP")
             self.uc.emu_stop()
@@ -434,8 +450,8 @@ class Emulator:
 
         code = self.uc.mem_read(address, size)
         instruction = self.disassemble_instruction(code, address)
-        self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address,size))
 
+        self.logger('>>> Executing instruction [%s %s] at 0x%x, instruction size = 0x%x' % (instruction.mnemonic,instruction.op_str,address,size))
         if self.state == State.STEP:
             self.STEP_INFO = {
                 "address": hex(address),
@@ -480,3 +496,13 @@ class Emulator:
         """
         self.logger(">>> Interrupt: %x" % (no))
         return
+
+    def hook_mem_invalid_write(self, uc, access, address, size, value, user_data):
+
+        self.logger(">>> Invalid memory write at 0x%x, data size = %u" % (address, size))
+        return False
+
+    def hook_mem_invalid_read(self, uc, access, address, size, value, user_data):
+
+        self.logger(">>> Invalid memory read at 0x%x, data size = %u" % (address, size))
+        return False

@@ -33,8 +33,8 @@ export default function SRegs({emulator_data}) {
   )
 
   return (
-    <div>
-      <TableContainer component={Paper}>
+    <div style={{padding: "2px", borderBottom: '1px solid white'}}>
+      <TableContainer component={Paper} style={{boxShadow: "none"}}>
         <Table size="small" aria-label="a dense table" padding="none">
           <TableBody>
             {rows.map((row) => (
@@ -42,15 +42,15 @@ export default function SRegs({emulator_data}) {
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.name1}
                 </TableCell>
                 <TableCell align="center">{row.value1}</TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.name2}
                 </TableCell>
                 <TableCell align="center">{row.value2}</TableCell>  
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.name3}
                 </TableCell>
                 <TableCell align="center">{row.value3}</TableCell>  

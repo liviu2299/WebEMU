@@ -4,7 +4,7 @@ import Message from './Message';
 
 import './Log.css'
 
-export default function Log({logs}) {
+export default function Log({logs, error}) {
 
   const divEndRef = useRef();
 
@@ -18,13 +18,13 @@ export default function Log({logs}) {
 
   return (
     <div className="logs">
-        {logs.map((message, i) => 
-            <div key={i}>
-                    <Message key={i} message={message}/>                      
-            </div>
-            )
-        }
-        <div ref={divEndRef} />
+    {logs.map((message, i) => 
+        <div key={i}>
+                <Message key={i} message={message} error={error}/>                      
+        </div>
+        )
+    }
+    <div ref={divEndRef} />
     </div>
 );
 }

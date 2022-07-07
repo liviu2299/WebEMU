@@ -3,6 +3,7 @@ from flask_session import Session
 from emulator import Emulator
 from cached_model import Time_Machine
 from utils import *
+import time
 import jsonpickle
 
 def create_app(test_config=None):
@@ -17,8 +18,6 @@ def create_app(test_config=None):
         app.config.from_pyfile('config.py', silent=True)
     else:
         app.config.from_mapping(test_config)
-
-    # TODO: Bug fix when first line is empty
 
     @app.route("/", methods=['POST'])
     def home():
@@ -114,15 +113,14 @@ def create_app(test_config=None):
         data = request.json['data']
         code = formatNoneType(data.splitlines())
         old_context = session[id]
-
         emu = Emulator()
 
         # GET CACHE
         emu.update(old_context["MEMORY"], old_context["STACK"], None, None, None, None, None)
         emu.uc = emu.initiate_uc()
 
-        # ASSEMBLE
-        emu.compile(code)
+        # ASSEMBLE     
+        emu.compile(code)  
         emu.update_data()
         
         # UPDATE CACHE
@@ -196,6 +194,9 @@ def create_app(test_config=None):
             # STEP
             emu.step()
             emu.update_data()
+
+            mem = emu.uc.mem_read(emu.MEMORY["starting_address"], emu.MEMORY["size"])
+            encrypted_mem = bytes(mem)
             
             # UPDATE CACHE
             unicorn_context = emu.uc.context_save()
@@ -272,7 +273,8 @@ def create_app(test_config=None):
             session[id]["end_addr"],
             session[id]["LOG"],
             session[id]["ERROR"],
-            session[id]["editor_mapping"]
+            session[id]["editor_mapping"],
+            session[id]["error_line"]
         ).__dict__
 
         return{

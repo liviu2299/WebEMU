@@ -112,16 +112,12 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
     setPrevious(rows)
   };
 
-  useEffect(() => {
-    console.log(error)
-  }, [error])
-
   const Validation = (row,column) => {
     const value = row[column]
     switch(row.id){
       case "memory": {
         if(column === "value2"){
-          if(value < Number(rows[1].value2) || value < Number(rows[2].value2)){
+          if(value < Number(rows[1].value2) || value < Number(rows[2].value2) || (value-(emulator_data.MEMORY.starting_address+emulator_data.MEMORY.size))%16 !== 0){
             setError(true)
             return true
           }
@@ -133,7 +129,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
       }
       case ".stack": {
         if(column === "value"){
-          if(between(value,Number(rows[2].value),Number(rows[2].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value>=Number(rows[1].value2)){
+          if(between(value,Number(rows[2].value),Number(rows[2].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value>=Number(rows[1].value2) || (value-(emulator_data.STACK.starting_address))%16 !== 0){
             setError(true)
             return true
           }
@@ -143,7 +139,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
           }
         }
         if(column === "value2"){
-          if(between(value,Number(rows[2].value),Number(rows[2].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value<=Number(rows[1].value)) {
+          if(between(value,Number(rows[2].value),Number(rows[2].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value<=Number(rows[1].value) || (value-(emulator_data.STACK.starting_address+emulator_data.STACK.size))%16 !== 0) {
             setError(true)
             return true
           }
@@ -155,7 +151,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
       }
       case ".data": {
         if(column === "value"){
-          if(between(value,Number(rows[1].value),Number(rows[1].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value>=Number(rows[2].value2)){
+          if(between(value,Number(rows[1].value),Number(rows[1].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value>=Number(rows[2].value2) || (value-(emulator_data.DATA.starting_address))%16 !== 0){
             setError(true)
             return true
           }
@@ -165,7 +161,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
           }
         }
         if(column === "value2"){
-          if(between(value,Number(rows[1].value),Number(rows[1].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value<=Number(rows[2].value)){
+          if(between(value,Number(rows[1].value),Number(rows[1].value2)) || !between_eq(value,Number(rows[0].value),Number(rows[0].value2)) || value<=Number(rows[2].value) || (value-(emulator_data.DATA.starting_address+emulator_data.DATA.size))%16 !== 0){
             setError(true)
             return true
           }
@@ -254,8 +250,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
   }
 
   return (
-    <div>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} style={{boxShadow: "none"}}>
         <Table size="small" aria-label="a dense table" padding="none">
           <colgroup>
             <col width="30%" />
@@ -269,7 +264,7 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={{color: "#76b5c5"}}>
                   {row.name}
                 </TableCell>
                 <CustomTableCell {... {row, name: "value", onChange, Validation}}/>
@@ -310,6 +305,5 @@ export default function Mapping({client_id, emulator_data, setEmulator}) {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
   )
 }
