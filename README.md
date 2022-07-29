@@ -3,7 +3,9 @@
   The purpose of this project is to create a software platform that allows the interpretation of
 the assembly language. The application is developed for educational purposes and is intended for
 people who want to get acquainted with the basic concepts of low-level programming providing
-them a dynamic learning environment. The project consists in a module capable of emulating
+them a dynamic learning environment. 
+
+  The project consists in a module capable of emulating
 the x86 microprocessor architecture and an intuitive interface through which the user can follow
 the process of compiling and executing a code sequence.
 
